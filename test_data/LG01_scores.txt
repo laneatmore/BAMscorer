@@ -1,0 +1,4 @@
+Individual	AA	BB	AB	SNPs
+COD003.gadMor2nu.realigned	0.0	0.0	1.0	104
+COD023.gadMor2nu.realigned	1.0	0.0	0.0	76
+COD053.gadMor2nu.realigned	0.0	1.0	0.0	78
