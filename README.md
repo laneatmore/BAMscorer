@@ -4,7 +4,7 @@ BAMscorer can be used to conduct genomic assignment tests from BAM files.
 
 The program takes a VCF as an input file, then runs PCA and heterozygosity calculations on the input data to generate heterozygosity calculations, eigenvalues, and SNP loading weights. The user must manually select the haplotype each reeference individual belongs to using a program like Excel. This file will then be input to the second script in the BAMscorer pipeline, which creates an allele database on input haplotypes, checks the same positions in input BAM files, and outputs a joint probability score that each individual belongs to one of three haplotypes: AA, BB, or AB. For genome-wide analysis AB haplotypes are not calculated.
 
-Citation: Ferrari et al., 2021. An accurate assignment test for extremely low-coverage whole-genome sequence data. *In prep*
+Citation: Ferrari & Atmore et al., 2021. An accurate assignment test for extremely low-coverage whole-genome sequence data. *In prep*
 
 For questions regarding program implementation, please contact Lane Atmore - lane@palaeome.org
 
