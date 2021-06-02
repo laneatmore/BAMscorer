@@ -143,6 +143,6 @@ score_bams.py can also be used as a stand-alone script if the user has a pre-exi
 
 ## Also included in this repository: 
 Utility_scripts: \
-plot_SNPloadings.R - to visualize distribution of SNP loading weights for yrou data: Useful for determining best parameters for the SNP loading cut-off value \
+plot_SNPloadings.R - to visualize distribution of SNP loading weights for your data: Useful for determining best parameters for the SNP loading cut-off value \
 Downsample_bootstrap_bam.sh - used for randomly downsampling BAM reads, used for bootstrapping through files to determine minimum reads required and/or filtering parameters.
 WRAPbams.sh and WRAPsnps.sh - example scripts for running BAMscorer on a slurm cluster
