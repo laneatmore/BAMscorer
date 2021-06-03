@@ -42,11 +42,11 @@ We recommend running through this tutorial with the test data provided
 A basic BAMscorer input line will look something like this: \
    **/PATH/TO/BAMscorer select_snps {args}**    or     **/PATH/TO/BAMscorer score_bams {args}**
    
-If you are running on linux, you must also specify python before calling the binary, e.g., "python /PATH/TO/BAMscorer select_snps ..."
-Please make sure you have all the following requirements in your python environment on linux:
-pysam
-pandas
-numpy
+*If you are running on linux, you must also specify python before calling the binary, e.g., "python /PATH/TO/BAMscorer select_snps ..."
+Please make sure you have all the following requirements in your python environment on linux: \
+pysam \
+pandas \
+numpy*
 
 Specific arguments are described below. Running BAMscorer select_snps -h or BAMscorer score_bams -h can also provide more information.
 
