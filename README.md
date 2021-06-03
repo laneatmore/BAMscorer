@@ -27,7 +27,7 @@ Utility scripts for visualization/data prep
 
 **please note: BAMscorer requires glibc_2.17 or above
 
-**N.B. early reports from linux testing indicate there may be some glibcxx version incompatibilities between systems when running the select_snps module. I am working on a patch for this now but in the meantime have uploaded a python script that can be used in place of the select_snps module. If you are running the linux binary and are receiving a glibcxx not found error, please use select_snps.py. select_snps.py takes the same arguments as the select_snps module in the binary, which can be reviewed by using the -h function. An updated binary will be provided asap -- LMA 3.6.21
+**N.B. early reports from linux binary use indicates there may be some glibcxx version incompatibilities between systems when running the select_snps module. I am working on a patch for this now but in the meantime have uploaded a python script that can be used in place of the select_snps module. If you are running the linux binary and are receiving a glibcxx not found error, please use select_snps.py. select_snps.py takes the same arguments as the select_snps module in the binary, which can be reviewed by using the -h function. An updated binary will be provided asap -- LMA 3.6.21
 
 ## Running BAMscorer
 
