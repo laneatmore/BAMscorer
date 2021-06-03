@@ -18,7 +18,7 @@ Eigensoft
 
 BAMscorer can be downloaded from github. Please check the release page for the most up-to-date binaries. 
 This includes: \
-Linux 64-bit binary \
+Linux binary \
 MacOS 64-bit binary \
 A compressed source code zip or tarball including: \
 Test dataset \
@@ -27,7 +27,7 @@ Utility scripts for visualization/data prep
 
 **please note: BAMscorer requires glibc_2.17 or above
 
-**N.B. early reports from linux binary use indicates there may be some glibcxx version incompatibilities between systems when running the select_snps module. I am working on a patch for this now but in the meantime have uploaded a python script that can be used in place of the select_snps module. If you are running the linux binary and are receiving a glibcxx not found error, please use select_snps.py. select_snps.py takes the same arguments as the select_snps module in the binary, which can be reviewed by using the -h function. An updated binary will be provided asap -- LMA 3.6.21
+**N.B. early reports from linux binary use indicates there may be some glibcxx version incompatibilities between systems when running the select_snps module. I am working on a patch for this now but in the meantime have uploaded a python script that can be used in place of the select_snps module. If you are running the linux binary and are receiving a glibcxx not found error, please use select_snps.py. select_snps.py takes the same arguments as the select_snps module in the binary, which can be reviewed by using the -h function. An updated binary will be provided asap -- LMA 3.6.21 BINARY UPDATED AS OF 12:27 3.6.21, please make sure you have the latest version :)
 
 ## Running BAMscorer
 
@@ -41,6 +41,12 @@ We recommend running through this tutorial with the test data provided
 
 A basic BAMscorer input line will look something like this: \
    **/PATH/TO/BAMscorer select_snps {args}**    or     **/PATH/TO/BAMscorer score_bams {args}**
+   
+If you are running on linux, you must also specify python before calling the binary, e.g., "python /PATH/TO/BAMscorer select_snps ..."
+Please make sure you have all the following requirements in your python environment on linux:
+pysam
+pandas
+numpy
 
 Specific arguments are described below. Running BAMscorer select_snps -h or BAMscorer score_bams -h can also provide more information.
 
