@@ -4,7 +4,7 @@ BAMscorer can be used to conduct genomic assignment tests from BAM files.
 
 The program takes a VCF as an input file, then runs PCA and heterozygosity calculations on the input data to generate heterozygosity calculations, eigenvalues, and SNP loading weights. The user must manually select the haplotype each reference individual belongs to based on output eigenvalues and heterozygosity using a program like Excel. These ID lists will then be input to the second script in the BAMscorer pipeline, which creates an allele database on input haplotypes, checks the same positions in input BAM files, and outputs a joint probability score that each individual belongs to one of three haplotypes: AA, BB, or AB. For genome-wide analysis AB haplotypes are not calculated.
 
-Citation: Ferrari & Atmore et al., 2021. An accurate assignment test for extremely low-coverage whole-genome sequence data. *In prep*
+Citation: Ferrari & Atmore et al., 2021. An accurate assignment test for extremely low-coverage whole-genome sequence data. *bioRxiv* https://doi.org/10.1101/2021.06.04.447098
 
 For questions regarding program implementation, please contact Lane Atmore - lane@palaeome.org
 
@@ -154,3 +154,8 @@ Utility_scripts: \
 plot_SNPloadings.R - to visualize distribution of SNP loading weights for your data: Useful for determining best parameters for the SNP loading cut-off value \
 Downsample_bootstrap_bam.sh - used for randomly downsampling BAM reads, used for bootstrapping through files to determine minimum reads required and/or filtering parameters.
 WRAPbams.sh and WRAPsnps.sh - example scripts for running BAMscorer on a slurm cluster
+
+
+
+
+This project received funding from RCN project “Catching the Past” (262777) and the European Union’s Horizon 2020 research and innovation programme under the Marie Skłodowska-Curie grant agreement No 813383. The European Research Agency is not responsible for any use that may be made of the information it contains.
