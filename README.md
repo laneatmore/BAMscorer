@@ -12,7 +12,8 @@ Software requirements: \
 PLINK \
 VCFtools \
 Python3 \
-Eigensoft
+Eigensoft \
+SAMtools
 
 ## Downloading BAMscorer
 
