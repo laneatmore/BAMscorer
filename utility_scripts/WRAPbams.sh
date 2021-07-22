@@ -25,4 +25,4 @@ OUT=$2
 BAM=$3
 ABS=$4
 
-/PATH/TO/BAMscorer score_bams $VCF $OUT $BAM --nofrq --abs $ABS
+python /PATH/TO/BAMscorer score_bams $VCF $OUT $BAM --nofrq --abs $ABS
