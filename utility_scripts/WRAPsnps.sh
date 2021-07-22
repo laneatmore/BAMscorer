@@ -34,4 +34,4 @@ WEIGHT=$5
 #Use the --include flag to point the script to a BED file with the inversion start and end points
 #Use the --map flag to point to a chromosome map to recode non-integer chromosomes to integers for PLINK and Eigensoft
 
-/PATH/TO/BAMscorer select_snps $1 $2 --include $3 --map $4 --maf $5 --weight $5
+python /PATH/TO/BAMscorer select_snps $1 $2 --include $3 --map $4 --maf $5 --weight $5
