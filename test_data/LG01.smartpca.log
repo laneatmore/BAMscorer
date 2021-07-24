@@ -1,0 +1,123 @@
+parameter file: test_data/LG01.par
+### THE INPUT PARAMETERS
+##PARAMETER NAME: VALUE
+genotypename: test_data/LG01.geno
+snpname: test_data/LG01.snp
+indivname: test_data/LG01.ind
+evecoutname: test_data/LG01.pca.evec
+evaloutname: test_data/LG01.pca.eval
+altnormstyle: NO
+lsqproject: YES
+snpweightoutname: test_data/LG01.SNP.loadings
+numoutevec: 2
+numoutlieriter: 0
+numoutlierevec: 10
+outliersigmathresh: 2
+qtmode: 0
+numchrom: 26
+## smartpca version: 16000
+norm used
+
+lsqproject used
+packed geno read OK
+end of inpack
+nodata:        LG01:10618752
+nodata:        LG01:10693589
+nodata:        LG01:11215016
+nodata:        LG01:12944717
+nodata:        LG01:13724412
+nodata:        LG01:13724433
+nodata:        LG01:14003306
+nodata:        LG01:14003314
+nodata:        LG01:14393253
+nodata:        LG01:14470801
+nodata:        LG01:14524072
+nodata:        LG01:14778711
+nodata:        LG01:14778712
+nodata:        LG01:15223529
+nodata:        LG01:15439294
+nodata:        LG01:17165511
+nodata:        LG01:17165518
+nodata:        LG01:18118402
+nodata:        LG01:18143315
+nodata:        LG01:18241331
+nodata:        LG01:18781008
+nodata:        LG01:19294847
+nodata:        LG01:19745995
+nodata:        LG01:20571909
+nodata:        LG01:20749217
+nodata:        LG01:21830919
+nodata:        LG01:21943494
+nodata:        LG01:22136998
+nodata:        LG01:22498235
+nodata:        LG01:22498243
+nodata:        LG01:22876852
+nodata:        LG01:23179277
+nodata:        LG01:23345074
+nodata:        LG01:23345075
+nodata:        LG01:23480857
+nodata:        LG01:23637150
+nodata:        LG01:24035350
+nodata:        LG01:24035352
+nodata:        LG01:24197066
+nodata:        LG01:24393054
+nodata:        LG01:24440401
+nodata:        LG01:24595145
+nodata:        LG01:24651137
+nodata:        LG01:25190477
+nodata:        LG01:25344945
+nodata:        LG01:25511079
+nodata:        LG01:25729653
+nodata:        LG01:25745235
+number of samples used: 12 number of snps used: 384483
+Using 8 threads, and partial sum lookup algorithm.
+ snp         LG01:9600079 ignored . allelecnt:     0  missing:     3
+ snp         LG01:9600080 ignored . allelecnt:     0  missing:     3
+ snp         LG01:9600085 ignored . allelecnt:     0  missing:     4
+ snp         LG01:9600143 ignored . allelecnt:     0  missing:     2
+ snp         LG01:9600151 ignored . allelecnt:     0  missing:     2
+ snp         LG01:9600152 ignored . allelecnt:     0  missing:     3
+ snp         LG01:9600157 ignored . allelecnt:     0  missing:     2
+ snp         LG01:9600170 ignored . allelecnt:     0  missing:     2
+ snp         LG01:9600223 ignored . allelecnt:     0  missing:     1
+ snp         LG01:9600224 ignored . allelecnt:     0  missing:     1
+total number of snps killed in pass: 281118  used: 103365
+
+## Tracy-Widom statistics: rows: 12  cols: 384483
+  #N    eigenvalue  difference    twstat      p-value effect. n
+   1      6.345151          NA     0.149     0.142625     4.523
+   2      0.636148   -5.709003    -2.936     0.922286   139.233
+   3      0.609824   -0.026324        NA           NA        NA
+   4      0.603882   -0.005942        NA           NA        NA
+   5      0.590997   -0.012885        NA           NA        NA
+   6      0.563199   -0.027798        NA           NA        NA
+   7      0.351516   -0.211683        NA           NA        NA
+   8      0.334746   -0.016770        NA           NA        NA
+   9      0.327402   -0.007344        NA           NA        NA
+  10      0.321224   -0.006178        NA           NA        NA
+  11      0.315912   -0.005311        NA           NA        NA
+    kurtosis           snps    indivs
+ eigenvector    1     7.961     1.079
+ eigenvector    2    12.111     2.873
+population:   0              Control   12
+eigbestsnp    1         LG01:9600946  1      9600946     3.693
+eigbestsnp    1         LG01:9631805  1      9631805     3.693
+eigbestsnp    1         LG01:9631847  1      9631847     3.693
+eigbestsnp    1         LG01:9633726  1      9633726     3.693
+eigbestsnp    1         LG01:9634599  1      9634599     3.693
+eigbestsnp    1         LG01:9634600  1      9634600     3.693
+eigbestsnp    1         LG01:9634647  1      9634647     3.693
+eigbestsnp    1         LG01:9634692  1      9634692     3.693
+eigbestsnp    1         LG01:9634845  1      9634845     3.693
+eigbestsnp    1         LG01:9635574  1      9635574     3.693
+eigbestsnp    2        LG01:15972484  1     15972484     8.504
+eigbestsnp    2        LG01:11295752  1     11295752     7.999
+eigbestsnp    2        LG01:10572717  1     10572717     7.588
+eigbestsnp    2        LG01:10577525  1     10577525     7.588
+eigbestsnp    2        LG01:11848558  1     11848558     7.588
+eigbestsnp    2        LG01:11849623  1     11849623     7.588
+eigbestsnp    2        LG01:15329531  1     15329531     7.575
+eigbestsnp    2        LG01:23350235  1     23350235     7.554
+eigbestsnp    2        LG01:14122298  1     14122298     7.517
+eigbestsnp    2        LG01:13961603  1     13961603     7.516
+##end of smartpca run

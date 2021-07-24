@@ -1,4 +1,4 @@
-#/usr/bin/env python3
+#/usr/local/bin/python3
 
 #__main__.py
 
@@ -22,6 +22,16 @@ pd.set_option('display.max_rows', None)
 pd.set_option('display.width', None)
 pd.set_option('display.max_colwidth', None)
 
+unreadable = {}
+divergent_snps = pd.DataFrame()
+divergent_snps_maf = pd.DataFrame()
+	
+score_AA = {}
+score_BB = {}
+score_AB = {}
+			
+mapped_SNPs = {}
+
 def main():
 
 	if (len(sys.argv) < 2):
@@ -44,6 +54,7 @@ def main():
 		parser.add_argument('--weight', type = str, nargs = '?', help = 'Assign SNP loading cut-off value', default = '5')
 		parser.add_argument('--top', type = str, help = 'Select only the top tail of the SNP loading distribution. Must be used with --bottom')
 		parser.add_argument('--bottom', type = str, help = 'Select only the bottom tail of the SNP loading distribution. Must be used with --top')
+		parser.add_argument('--numchrom', type = str, nargs = '?', help = 'Specify number of chromosomes (default 22). Use for whole-genome analysis if you have more than 22 chromosomes', default = '22')
 		args, unknown = parser.parse_known_args()
 		pass_args = sys.argv[2:]
 		
@@ -53,6 +64,9 @@ def main():
 		VCF = str(sys.argv[2])
 		OUT = str(sys.argv[3])
 		weight = int(args.weight)
+		
+		CHROM = str(args.numchrom)
+		
 		if args.top:
 			top_weight = int(args.top)
 		if args.bottom:
@@ -101,6 +115,7 @@ def main():
 				os.system('plink --file ' + OUT + ' \
 					--keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
+					--chr-set ' + args.numchrom + ' \
 					--make-bed \
 					--double-id \
 					--out ' + OUT)
@@ -126,6 +141,7 @@ def main():
 			elif(len(sys.argv) >= 4 and not args.map and not args.include):
 				os.system('plink --vcf ' + VCF + ' --keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
+					--chr-set ' + args.numchrom + ' \
 					--make-bed \
 					--double-id \
 					--out ' + OUT)
@@ -166,6 +182,7 @@ def main():
 				os.system('plink --file ' + OUT + ' \
 					--keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
+					--chr-set ' + args.numchrom + ' \
 					--make-bed \
 					--double-id \
 					--maf ' + args.maf + ' \
@@ -193,6 +210,7 @@ def main():
 			elif(len(sys.argv) >= 4 and not args.map and not args.include):
 				os.system('plink --vcf ' + VCF + ' --keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
+					--chr-set ' + args.numchrom + ' \
 					--make-bed \
 					--double-id \
 					--maf ' + args.maf + ' \
@@ -227,6 +245,40 @@ def main():
 		
 		#make new .params and .par files for eigensoft
 		#run convertf and smartpca
+		def convertf_run_numchrom(OUT, CHROM):
+			with open(OUT + '.params.txt', 'w') as f:
+				print('genotypename: ' + OUT + '.bed', file=f)
+				print('snpname: ' + OUT + '.bim', file=f)
+				print('indivname: ' + OUT + '.fam', file=f)
+				print('outputformat: PACKEDANCESTRYMAP', file=f)
+				print('genooutfilename: ' + OUT + '.geno', file=f)
+				print('snpoutfilename: ' + OUT + '.snp', file=f)
+				print('indoutfilename: ' + OUT + '.ind', file=f)
+				print('numchrom: ' + CHROM, file=f)
+
+			convertf = subprocess.Popen('convertf -p ' + OUT + '.params.txt', shell = True)
+			convertf.communicate()
+
+		def smartpca_run_numchrom(OUT, CHROM):
+			with open(OUT + '.par', 'w') as f: 
+				print('genotypename: ' + OUT + '.geno', file=f)
+				print('snpname: ' + OUT + '.snp', file=f)
+				print('indivname: ' + OUT + '.ind', file=f)
+				print('evecoutname: ' + OUT + '.pca.evec', file=f)
+				print('evaloutname: ' + OUT + '.pca.eval', file=f)
+				print('altnormstyle: NO', file=f)
+				print('lsqproject: YES', file=f)
+				print('snpweightoutname: ' + OUT + '.SNP.loadings', file=f)
+				print('numoutevec: 2', file=f)
+				print('numoutlieriter: 0', file=f)
+				print('numoutlierevec: 10', file=f)
+				print('outliersigmathresh: 2', file=f)
+				print('qtmode: 0', file=f)
+				print('numchrom: ' + CHROM, file=f)
+
+			smartpca = subprocess.Popen('smartpca -p ' + OUT + '.par > ' + OUT + '.smartpca.log', shell = True)
+			smartpca.communicate()
+		
 		def convertf_run(OUT):
 			with open(OUT + '.params.txt', 'w') as f:
 				print('genotypename: ' + OUT + '.bed', file=f)
@@ -256,8 +308,9 @@ def main():
 				print('outliersigmathresh: 2', file=f)
 				print('qtmode: 0', file=f)
 
-			smartpca = subprocess.Popen('smartpca -p ' + OUT + '.par > ' + OUT + '.log', shell = True)
+			smartpca = subprocess.Popen('smartpca -p ' + OUT + '.par > ' + OUT + '.smartpca.log', shell = True)
 			smartpca.communicate()
+
 
 		#make a txt file with PC1 values for each individual to use for assigning
 		#haplotype groups
@@ -335,6 +388,7 @@ def main():
 			os.remove(OUT + '.params.txt')
 			os.remove(OUT + '.snp')
 			os.remove(OUT + '.geno')
+			os.remove(OUT + '.log')
 		
 		if not args.maf:
 			cut_vcf()
@@ -343,8 +397,12 @@ def main():
 		fix_fam(OUT)
 		check_files(OUT)
 		check_files2(OUT)
-		convertf_run(OUT)
-		smartpca_run(OUT)
+		if args.numchrom:
+			convertf_run_numchrom(OUT, CHROM)
+			smartpca_run_numchrom(OUT, CHROM)
+		else:
+			convertf_run(OUT)
+			smartpca_run(OUT)
 		update_evec(OUT)
 		if args.top and args.bottom:
 			divergent_snps_custom(OUT, top_weight, bottom_weight)
@@ -377,16 +435,6 @@ def main():
 			sys.exit('Have you called all your arguments? Use --h to see arguments and descriptors', flush = True)
 
 		if not args.wg:	
-			divergent_snps = pd.DataFrame()
-			divergent_snps_maf = pd.DataFrame()
-	
-			unreadable = {}
-	
-			score_AA = {}
-			score_BB = {}
-			score_AB = {}
-			
-			mapped_SNPs = {}
 			def index_bams(BAM, PWD):
 				os.chdir(BAM)
 	
@@ -637,6 +685,8 @@ def main():
 				global score_AA
 				global score_BB
 				global score_AB
+				global divergent_snps
+				global divergent_snps_maf
 	
 				for f in os.listdir():
 					if f.endswith('.csv'):
@@ -654,7 +704,9 @@ def main():
 						divergent_MA = pd.DataFrame()
 						divergent_DA = divergent_snps
 						divergent_MA = divergent_snps_maf
-			
+						print(divergent_DA.head(), flush = True)
+						
+						
 						divergent_DA['CHROM'] = divergent_DA['CHROM'].astype(str)
 						divergent_DA['POS'] = divergent_DA['POS'].astype(str)
 						divergent_MA['CHROM'] = divergent_MA['CHROM'].astype(str)
@@ -890,16 +942,6 @@ def main():
 				pass
 				
 		elif args.wg:
-			divergent_snps = pd.DataFrame()
-			divergent_snps_maf = pd.DataFrame()
-	
-			unreadable = {}
-	
-			score_AA = {}
-			score_BB = {}
-			score_AB = {}
-			
-			mapped_SNPs = {}
 
 			def index_bams(BAM, PWD):
 				os.chdir(BAM)
