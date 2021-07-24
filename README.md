@@ -28,7 +28,7 @@ Utility scripts for visualization/data prep
 
 **please note: BAMscorer requires glibc_2.17 or above
 
-**N.B. early reports from linux binary use indicates there may be some glibcxx version incompatibilities between systems when running the select_snps module. I am working on a patch for this now but in the meantime have uploaded a python script that can be used in place of the select_snps module. If you are running the linux binary and are receiving a glibcxx not found error, please use select_snps.py. select_snps.py takes the same arguments as the select_snps module in the binary, which can be reviewed by using the -h function. An updated binary will be provided asap -- LMA 3.6.21 BINARY UPDATED AS OF 12:27 3.6.21, please make sure you have the latest version :)
+**N.B. new binaries have been updated 22.07.21 with --numchrom argument added as well as a patch for the linux binary, which had an error associated with alignment files with too few reads for scoring :)
 
 ## Running BAMscorer
 
@@ -77,6 +77,8 @@ OPTIONAL ARGUMENTS: \
 **--weight** specify SNP loading weight cut-off for database creation. Default is top and bottom 5% of SNP loading loci. Argument should be an integer.
 
 **--top/--bottom** specify pulling SNPs from the top or bottom tail of the SNP loading distribution. These arguments must be used together to specify the amount of distribution taken from each tail (0 is an accepted input value). These arguments should not be used with --weight, which pulls equally from both tails of the distribution.
+
+**--numchrom** specify the number of chromosomes if greater than 22
 
 select_snps first runs smartpca on SNPs in the inversion site, outputting {OUT}.pca.evec, {OUT}.pca.eval, and {OUT}.SNP.loadings files. It reads the {OUT}.SNP.loadings file back and selects the SNPs with the top and bottom 5% weights on PC1. It then uses only these sites to construct the database with the suffix {OUT}.divergent_snps.txt. Final database creation will occur in score_bams.
 
