@@ -666,7 +666,6 @@ def main():
 							print('Finished reading bam for: ' + ind, flush = True)
 							print('Number of loci scored: ', flush = True)
 							print(len(pos_alleles), flush = True)
-							mapped_SNPs = {}
 							mapped_SNPs[ind] = len(pos_alleles)
 							#output each individual to a dictionary with all individuals				
 							#SNPs_dict[ind] = pos_alleles
