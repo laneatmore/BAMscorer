@@ -25,11 +25,11 @@ pd.set_option('display.max_colwidth', None)
 unreadable = {}
 divergent_snps = pd.DataFrame()
 divergent_snps_maf = pd.DataFrame()
-	
+
 score_AA = {}
 score_BB = {}
 score_AB = {}
-			
+
 mapped_SNPs = {}
 
 def main():
@@ -38,12 +38,12 @@ def main():
 		sys.exit('Too few arguments -- did you specify select_snps or score_bams?')
 	else:
 		pass
-	
+
 	arg1 = str(sys.argv[1])
-	
+
 	if arg1 == '-h':
-		print('Run BAMscorer with either the argument select_snps OR score_bams. For more documentation run select_snps -h or score_bams -h ')	
-	
+		print('Run BAMscorer with either the argument select_snps OR score_bams. For more documentation run select_snps -h or score_bams -h ')
+
 	elif arg1 == 'select_snps':
 		parser = argparse.ArgumentParser()
 		parser.add_argument('VCF', type = str, help = 'Tell the caller which VCF you want to use')
@@ -57,33 +57,33 @@ def main():
 		parser.add_argument('--numchrom', type = str, nargs = '?', help = 'Specify number of chromosomes (default 22). Use for whole-genome analysis if you have more than 22 chromosomes', default = '22')
 		args, unknown = parser.parse_known_args()
 		pass_args = sys.argv[2:]
-		
+
 		pass_args_str = ' '.join([str(elem) for elem in pass_args])
 		print("running BAMscorer with: " + pass_args_str, flush = True)
 
 		VCF = str(sys.argv[2])
 		OUT = str(sys.argv[3])
 		weight = int(args.weight)
-		
+
 		CHROM = str(args.numchrom)
-		
+
 		if args.top:
 			top_weight = int(args.top)
 		if args.bottom:
 			bottom_weight = int(args.bottom)
-		
+
 		if (len(sys.argv) < 3):
 			sys.exit("Too few arguments specified", flush = True)
 		else:
 			pass
-			
+
 		#First prep the files with plink and VCFtools
 		def tabix():
 			if os.path.exists(VCF + '.tbi'):
 				pass
 			else:
 				os.system('tabix -p vcf ' + VCF)
-	
+
 		def cut_vcf():
 			print('Prepping VCF')
 			#If all arguments are specified
@@ -94,7 +94,7 @@ def main():
 					--plink \
 					--chrom-map ' + args.map + ' \
 					--out ' + OUT)
-				
+
 				os.system('plink --file ' + OUT + ' \
 					--keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
@@ -102,16 +102,16 @@ def main():
 					--double-id \
 					--out ' + OUT)
 				print('VCF converted to PLINK with ' + args.include + ', ' + args.map, flush = True)
-	
+
 			#If you don't need a chromosome map but need to cut the VCF
 			elif(len(sys.argv) >= 6 and args.include):
 			#If you have regions to include
-		
+
 				os.system('vcftools --gzvcf ' + VCF + ' \
 					--bed ' + args.include + ' \
 					--plink \
 					--out ' + OUT)
-			
+
 				os.system('plink --file ' + OUT + ' \
 					--keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
@@ -120,15 +120,15 @@ def main():
 					--double-id \
 					--out ' + OUT)
 				print('VCF converted to PLINK with ' + args.include, flush = True)
-				
+
 			#if VCF pre-split but still need chrom_map
 			elif(len(sys.argv) >= 6 and args.map):
-		
+
 				os.system('vcftools --gzvcf ' + VCF + ' \
 					--chrom-map ' + args.map + ' \
 					--plink \
 					--out ' + OUT)
-		
+
 				os.system('plink --file ' + OUT + ' \
 					--keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
@@ -136,7 +136,7 @@ def main():
 					--double-id \
 					--out ' + OUT)
 				print('VCF converted to PLINK with ' + args.map, flush = True)
-				
+
 			#if VCF already split into inversion site and no need for chrom_map
 			elif(len(sys.argv) >= 4 and not args.map and not args.include):
 				os.system('plink --vcf ' + VCF + ' --keep-allele-order \
@@ -146,10 +146,10 @@ def main():
 					--double-id \
 					--out ' + OUT)
 				print('VCF converted to PLINK', flush = True)
-	
+
 			else:
 				sys.exit("have you specified the right arguments?")
-		
+
 		def cut_vcf_maf():
 			print('Prepping VCF')
 			#If all arguments are specified
@@ -160,7 +160,7 @@ def main():
 					--plink \
 					--chrom-map ' + args.map + ' \
 					--out ' + OUT)
-				
+
 				os.system('plink --file ' + OUT + ' \
 					--keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
@@ -169,16 +169,16 @@ def main():
 					--maf ' + args.maf + ' \
 					--out ' + OUT)
 				print('VCF converted to PLINK with ' + args.include + ', ' + args.map, flush = True)
-	
+
 			#If you don't need a chromosome map but need to cut the VCF
 			elif(len(sys.argv) >= 6 and args.include):
 			#If you have regions to include
-		
+
 				os.system('vcftools --gzvcf ' + VCF + ' \
 					--bed ' + args.include + ' \
 					--plink \
 					--out ' + OUT)
-			
+
 				os.system('plink --file ' + OUT + ' \
 					--keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
@@ -188,15 +188,15 @@ def main():
 					--maf ' + args.maf + ' \
 					--out ' + OUT)
 				print('VCF converted to PLINK with ' + args.include, flush = True)
-				
+
 			#if VCF pre-split but still need chrom_map
 			elif(len(sys.argv) >= 6 and args.map):
-		
+
 				os.system('vcftools --gzvcf ' + VCF + ' \
 					--chrom-map ' + args.map + ' \
 					--plink \
 					--out ' + OUT)
-		
+
 				os.system('plink --file ' + OUT + ' \
 					--keep-allele-order \
 					--allow-extra-chr --set-missing-var-ids @:# \
@@ -205,7 +205,7 @@ def main():
 					--maf ' + args.maf + ' \
 					--out ' + OUT)
 				print('VCF converted to PLINK with ' + args.map, flush = True)
-				
+
 			#if VCF already split into inversion site and no need for chrom_map
 			elif(len(sys.argv) >= 4 and not args.map and not args.include):
 				os.system('plink --vcf ' + VCF + ' --keep-allele-order \
@@ -216,13 +216,13 @@ def main():
 					--maf ' + args.maf + ' \
 					--out ' + OUT)
 				print('VCF converted to PLINK')
-	
+
 			else:
 				sys.exit("have you specified the right arguments?")
 				#run VCFtools to calculate heterozygosity based on the most divergent SNPs
 
 		tabix()
-		
+
 		def fix_fam(OUT):
 			fam = pd.read_csv(OUT + '.fam', sep = ' ', header = None)
 			fam[5] = fam[5].replace([-9],1)
@@ -239,10 +239,10 @@ def main():
 		def check_files2(OUT):
 			filepath2=OUT + '.par'
 			if os.path.exists(filepath2):
-				os.remove(filepath2)	
+				os.remove(filepath2)
 			else:
 				pass
-		
+
 		#make new .params and .par files for eigensoft
 		#run convertf and smartpca
 		def convertf_run_numchrom(OUT, CHROM):
@@ -260,7 +260,7 @@ def main():
 			convertf.communicate()
 
 		def smartpca_run_numchrom(OUT, CHROM):
-			with open(OUT + '.par', 'w') as f: 
+			with open(OUT + '.par', 'w') as f:
 				print('genotypename: ' + OUT + '.geno', file=f)
 				print('snpname: ' + OUT + '.snp', file=f)
 				print('indivname: ' + OUT + '.ind', file=f)
@@ -278,7 +278,7 @@ def main():
 
 			smartpca = subprocess.Popen('smartpca -p ' + OUT + '.par > ' + OUT + '.smartpca.log', shell = True)
 			smartpca.communicate()
-		
+
 		def convertf_run(OUT):
 			with open(OUT + '.params.txt', 'w') as f:
 				print('genotypename: ' + OUT + '.bed', file=f)
@@ -293,7 +293,7 @@ def main():
 			convertf.communicate()
 
 		def smartpca_run(OUT):
-			with open(OUT + '.par', 'w') as f: 
+			with open(OUT + '.par', 'w') as f:
 				print('genotypename: ' + OUT + '.geno', file=f)
 				print('snpname: ' + OUT + '.snp', file=f)
 				print('indivname: ' + OUT + '.ind', file=f)
@@ -326,39 +326,39 @@ def main():
 
 			evec.close()
 			updated_evec.close()
-	
+
 		#Now we want to grab the loci that have the highest SNP loadings
 		#We will only take those loci that are in the top/bottom 5% of SNP loadings
 		def divergent_snps_symm(OUT, weight):
-			snp_loadings = pd.read_csv(OUT + '.SNP.loadings', 
-				delim_whitespace = True, 
+			snp_loadings = pd.read_csv(OUT + '.SNP.loadings',
+				delim_whitespace = True,
 				names = ['position', 'chr', 'pos', 'pc1', 'pc2'])
-		
+
 			top = snp_loadings[snp_loadings.pc1 > np.percentile(snp_loadings.pc1,(100-weight))]
 			bottom = snp_loadings[snp_loadings.pc1 < np.percentile(snp_loadings.pc1,weight)]
 			divergent_snps = pd.concat([top, bottom])
 			divergent_snps['CHR'] = divergent_snps['position'].str.split(':').map(lambda x: x[0])
-			divergent_snps[['CHR','pos']].to_csv(OUT + '.divergent_SNPs.txt', 
+			divergent_snps[['CHR','pos']].to_csv(OUT + '.divergent_SNPs.txt',
 				sep = '\t', header = None, index = None)
 			print('Divergent SNPs database created', flush = True)
-		
+
 		def divergent_snps_custom(OUT, top_weight, bottom_weight):
-			snp_loadings = pd.read_csv(OUT + '.SNP.loadings', 
-				delim_whitespace = True, 
+			snp_loadings = pd.read_csv(OUT + '.SNP.loadings',
+				delim_whitespace = True,
 				names = ['position', 'chr', 'pos', 'pc1', 'pc2'])
-		
+
 			top = snp_loadings[snp_loadings.pc1 > np.percentile(snp_loadings.pc1,(100-top_weight))]
 			bottom = snp_loadings[snp_loadings.pc1 < np.percentile(snp_loadings.pc1,bottom_weight)]
 			divergent_snps = pd.concat([top, bottom])
 			divergent_snps['CHR'] = divergent_snps['position'].str.split(':').map(lambda x: x[0])
-			divergent_snps[['CHR','pos']].to_csv(OUT + '.divergent_SNPs.txt', 
+			divergent_snps[['CHR','pos']].to_csv(OUT + '.divergent_SNPs.txt',
 				sep = '\t', header = None, index = None)
 			print('Divergent SNPs database created', flush = True)
-		
+
 		def het_calc(VCF, OUT):
 			os.system('vcftools --gzvcf ' + VCF + ' \
 				--positions ' + OUT + '.divergent_SNPs.txt --het \
-				--out ' + OUT) 
+				--out ' + OUT)
 
 		#now update the evec.txt file to include the heterozygosity scores
 		def pca_het(OUT):
@@ -389,7 +389,7 @@ def main():
 			os.remove(OUT + '.snp')
 			os.remove(OUT + '.geno')
 			os.remove(OUT + '.log')
-		
+
 		if not args.maf:
 			cut_vcf()
 		if args.maf:
@@ -411,7 +411,7 @@ def main():
 		het_calc(VCF, OUT)
 		pca_het(OUT)
 		clean_up(OUT)
-		
+
 	elif arg1 == 'score_bams':
 		parser = argparse.ArgumentParser()
 		parser.add_argument('VCF', type=str, help = 'Tell the caller which VCF you want to use. You should use the output VCF from step 1')
@@ -421,23 +421,23 @@ def main():
 		parser.add_argument('--abs', type=float, nargs='?', help='Designate cut-off value for absolute allele frequency differences between AA and BB populations. Must be between 0 and 1', default='0.0')
 		parser.add_argument('--wg', help='Run BAMscorer on a whole-genome SNP database -- this will only output AA and BB scores', action='store_true')
 		args, unknown = parser.parse_known_args()
-			
+
 		VCF = sys.argv[2]
 		OUT = sys.argv[3]
 		BAM = sys.argv[4]
 		PWD = os.getcwd()
 		ABS = args.abs
 		ABS = float(ABS)
-		
+
 		if args.VCF and args.OUT and args.BAM:
 			print('Running BAMscorer on files in ' + BAM + ' for ' + OUT + ' with VCF ' + VCF, flush = True)
 		else:
 			sys.exit('Have you called all your arguments? Use --h to see arguments and descriptors', flush = True)
 
-		if not args.wg:	
+		if not args.wg:
 			def index_bams(BAM, PWD):
 				os.chdir(BAM)
-	
+
 				for f in os.listdir():
 					ind = Path(f).stem
 					if os.path.exists(ind + '.bai') or os.path.exists(ind + '.bam.bai'):
@@ -445,7 +445,7 @@ def main():
 					else:
 						index = subprocess.Popen('samtools index ' + f, shell = True)
 						index.communicate()
-			
+
 				os.chdir(PWD)
 
 			#First, use VCFtools to get SNP frequency data from each of the fixed haplotypes
@@ -458,7 +458,7 @@ def main():
 				BB_freq = subprocess.Popen('vcftools --gzvcf ' + VCF + ' \
 					--keep ' + OUT + '_BB_individuals.txt --positions ' + OUT + '.divergent_SNPs.txt \
 					--freq --out ' + OUT + '_BB_SNPs', shell = True)
-	
+
 				AA_freq.communicate()
 				BB_freq.communicate()
 
@@ -467,7 +467,7 @@ def main():
 				#1. grab SNPs fixed for the AA haplotype
 				AA_freq = pd.read_csv(OUT + '_AA_SNPs.frq', sep = '\t', index_col = None, skiprows=1,
 					usecols=[0, 1, 4, 5],names=['CHROM','POS','REF_AF','ALT_AF'],dtype=str)
-	
+
 				AA_freq['REF'] = AA_freq['REF_AF'].str.split(':').map(lambda x: x[0])
 				AA_freq['REF_AF'] = AA_freq['REF_AF'].str.split(':').map(lambda x: x[1])
 				AA_freq['ALT'] = AA_freq['ALT_AF'].str.split(':').map(lambda x: x[0])
@@ -475,104 +475,104 @@ def main():
 				#2. Split REF and ALT alleles that are fixed for AA
 				AA_REF_freq = pd.DataFrame(AA_freq, columns = ['CHROM', 'POS', 'REF_AF', 'REF'])
 				AA_ALT_freq = pd.DataFrame(AA_freq, columns = ['CHROM', 'POS', 'ALT_AF', 'ALT'])
-	
+
 				del AA_freq
-	
+
 				#3. Filter for major and minor alleles -- create two datasets
 				AA_REF_daf = AA_REF_freq.loc[AA_REF_freq['REF_AF'].astype(float) >= 0.5]
 				AA_ALT_daf = AA_ALT_freq.loc[AA_ALT_freq['ALT_AF'].astype(float) >= 0.5]
-		
+
 				AA_REF_maf = AA_REF_freq.loc[AA_REF_freq['REF_AF'].astype(float) < 0.5]
 				AA_ALT_maf = AA_ALT_freq.loc[AA_ALT_freq['ALT_AF'].astype(float) < 0.5]
-	
+
 				del AA_REF_freq
 				del AA_ALT_freq
-	
+
 				#4. Recode these as dominant or minor alleles in the AA haplotype
-				AA_REF_daf = AA_REF_daf.rename(columns = {'REF': 'dom_Allele_AA', 
+				AA_REF_daf = AA_REF_daf.rename(columns = {'REF': 'dom_Allele_AA',
 				'REF_AF': 'AF_AA'})
-				AA_ALT_daf = AA_ALT_daf.rename(columns = {'ALT': 'dom_Allele_AA', 
+				AA_ALT_daf = AA_ALT_daf.rename(columns = {'ALT': 'dom_Allele_AA',
 				'ALT_AF': 'AF_AA'})
-	
-				AA_REF_maf = AA_REF_maf.rename(columns = {'REF': 'min_Allele_AA', 
+
+				AA_REF_maf = AA_REF_maf.rename(columns = {'REF': 'min_Allele_AA',
 				'REF_AF': 'AF_AA'})
-				AA_ALT_maf = AA_ALT_maf.rename(columns = {'ALT': 'min_Allele_AA', 
+				AA_ALT_maf = AA_ALT_maf.rename(columns = {'ALT': 'min_Allele_AA',
 				'ALT_AF': 'AF_AA'})
-	
+
 				#5. Combine these into a two databases -- dominant/minor alleles for the AA haplotype
 				AA_DOM = pd.concat([AA_REF_daf, AA_ALT_daf])
 				AA_MIN = pd.concat([AA_REF_maf, AA_ALT_maf])
-	
+
 				del AA_REF_daf
 				del AA_ALT_daf
 				del AA_REF_maf
 				del AA_ALT_maf
-	
+
 				#Now do the same for the BB haplotype
 				BB_freq = pd.read_csv(OUT + '_BB_SNPs.frq', sep = '\t', index_col = None, skiprows=1,
 					usecols=[0, 1, 4, 5],
 					names=['CHROM','POS','REF_AF','ALT_AF'],dtype=str)
-	
+
 				BB_freq['REF'] = BB_freq['REF_AF'].str.split(':').map(lambda x: x[0])
 				BB_freq['REF_AF'] = BB_freq['REF_AF'].str.split(':').map(lambda x: x[1])
 				BB_freq['ALT'] = BB_freq['ALT_AF'].str.split(':').map(lambda x: x[0])
 				BB_freq['ALT_AF'] = BB_freq['ALT_AF'].str.split(':').map(lambda x: x[1])
-	
+
 				BB_REF_freq = pd.DataFrame(BB_freq, columns = ['CHROM', 'POS', 'REF_AF', 'REF'])
 				BB_ALT_freq = pd.DataFrame(BB_freq, columns = ['CHROM', 'POS', 'ALT_AF', 'ALT'])
-	
+
 				del BB_freq
-	
+
 				BB_REF_daf = BB_REF_freq.loc[BB_REF_freq['REF_AF'].astype(float) >= 0.5]
 				BB_ALT_daf = BB_ALT_freq.loc[BB_ALT_freq['ALT_AF'].astype(float) >= 0.5]
-	
+
 				BB_REF_maf = BB_REF_freq.loc[BB_REF_freq['REF_AF'].astype(float) < 0.5]
 				BB_ALT_maf = BB_ALT_freq.loc[BB_ALT_freq['ALT_AF'].astype(float) < 0.5]
-	
+
 				del BB_REF_freq
 				del BB_ALT_freq
-	
-				BB_REF_daf = BB_REF_daf.rename(columns = {'REF': 'dom_Allele_BB', 
+
+				BB_REF_daf = BB_REF_daf.rename(columns = {'REF': 'dom_Allele_BB',
 				'REF_AF': 'AF_BB'})
-				BB_ALT_daf = BB_ALT_daf.rename(columns = {'ALT': 'dom_Allele_BB', 
+				BB_ALT_daf = BB_ALT_daf.rename(columns = {'ALT': 'dom_Allele_BB',
 				'ALT_AF': 'AF_BB'})
-	
-				BB_REF_maf = BB_REF_maf.rename(columns = {'REF': 'min_Allele_BB', 
+
+				BB_REF_maf = BB_REF_maf.rename(columns = {'REF': 'min_Allele_BB',
 				'REF_AF': 'AF_BB'})
-				BB_ALT_maf = BB_ALT_maf.rename(columns = {'ALT': 'min_Allele_BB', 
+				BB_ALT_maf = BB_ALT_maf.rename(columns = {'ALT': 'min_Allele_BB',
 				'ALT_AF': 'AF_BB'})
-	
+
 				BB_DOM = pd.concat([BB_REF_daf, BB_ALT_daf])
 				BB_MIN = pd.concat([BB_REF_maf, BB_ALT_maf])
-	
+
 				del BB_REF_daf
 				del BB_ALT_daf
 				del BB_REF_maf
 				del BB_ALT_maf
-	
+
 				global divergent_snps
 				divergent_snps = pd.merge(AA_DOM, BB_DOM, on = ['CHROM','POS'])
 				divergent_snps['POS_minus1'] = pd.to_numeric(divergent_snps['POS']).apply(lambda x: x -1)
-	
+
 				global divergent_snps_maf
 				divergent_snps_maf = pd.merge(AA_MIN, BB_MIN, on = ['CHROM','POS'])
-	
+
 				divergent_snps['AF_AA'] = divergent_snps['AF_AA'].astype(float)
 				divergent_snps['AF_BB'] = divergent_snps['AF_BB'].astype(float)
 				divergent_snps_maf['AF_AA'] = divergent_snps_maf['AF_AA'].astype(float)
 				divergent_snps_maf['AF_BB'] = divergent_snps_maf['AF_BB'].astype(float)
 				divergent_snps['AA_ABS'] = abs(divergent_snps['AF_AA'] - divergent_snps['AF_BB'])
 				divergent_snps['BB_ABS'] = abs(divergent_snps['AF_BB'] - divergent_snps['AF_AA'])
-	
+
 				divergent_snps = divergent_snps.loc[divergent_snps['AA_ABS'] >= ABS]
 				divergent_snps = divergent_snps.loc[divergent_snps['BB_ABS'] >= ABS]
-	
+
 				divergent_snps_maf['AA_ABS'] = abs(divergent_snps_maf['AF_AA'] - divergent_snps_maf['AF_BB'])
 				divergent_snps_maf['BB_ABS'] = abs(divergent_snps_maf['AF_BB'] - divergent_snps_maf['AF_AA'])
-	
+
 				divergent_snps_maf = divergent_snps_maf.loc[divergent_snps_maf['AA_ABS'] >= ABS]
 				divergent_snps_maf = divergent_snps_maf.loc[divergent_snps_maf['BB_ABS'] >= ABS]
-	
+
 				del AA_DOM
 				del AA_MIN
 				del BB_DOM
@@ -581,16 +581,16 @@ def main():
 				#one for the BB haplotype (AA_DOM and BB_DOM) and two for the minor alleles
 				#These databases include: CHROM, POS, N_ALLELES, N_CHR, AF, dom_Allele
 				#chromosome, position, number of alleles at this position, number of individuals
-				#with this position, Allele frequency of the dominant allele, 
+				#with this position, Allele frequency of the dominant allele,
 				#and the dominant allele genotype
-	
+
 				#We also have a divergent SNPs database to call positions
-				#AA and BB are combined to score probability of source population based on 
-				#joint likelihood of all the positions present belonging to homozygote AA, BB, or 
+				#AA and BB are combined to score probability of source population based on
+				#joint likelihood of all the positions present belonging to homozygote AA, BB, or
 				#heterozygote AB
-	
+
 				#we will use the dominant allele databases to call positions (but it could be done with either)
-				#Add one column with the preceding allele position so can call from BAMs 
+				#Add one column with the preceding allele position so can call from BAMs
 
 				#use these databases to score snps after calling from the bams with pysam
 
@@ -601,19 +601,19 @@ def main():
 				global divergent_snps
 				#global SNPS_dict
 				global unreadable
-	
+
 				global mapped_SNPs
-	
+
 				#iterate over the bams in the directory
 				for f in os.listdir():
 					if f.endswith('.bam'):
 						ind, bam = Path(f).stem, pysam.AlignmentFile(f, 'rb')
-	
+
 						#create dictionaries to store alleles and positions
 						alleles = []
 						pos_bam = []
 						chrom = []
-			
+
 						#iterate through the dominant allele dataframes
 						#apologize to the Python gods for iterating through a df
 						for row in divergent_snps.itertuples():
@@ -623,8 +623,8 @@ def main():
 										if pileupcolumn.pos == int(row.POS_minus1):
 											chrom.append(str(row.CHROM))
 											pos_bam.append(pileupcolumn.pos)
-											alleles.append(pileupread.alignment.query_sequence[pileupread.query_position])			
-			
+											alleles.append(pileupread.alignment.query_sequence[pileupread.query_position])
+
 						bam.close()
 						#if no positions could be read, output "too few reads" to the dictionary
 						if not alleles:
@@ -639,21 +639,21 @@ def main():
 							pos_alleles = pd.DataFrame(pos_alleles, columns = ['CHROM','POS_minus1', 'ALLELES'])
 							pos_alleles['POS_minus1'] = pos_alleles['POS_minus1'].astype(str)
 							pos_alleles['position'] = pos_alleles[['CHROM', 'POS_minus1']].agg('.'.join, axis=1)
-				
-							#get consensus reads for each position... 
+
+							#get consensus reads for each position...
 							pos_alleles = pos_alleles[['position', 'ALLELES']]
 							pos_alleles_dict = pos_alleles.groupby(['position'])['ALLELES'].apply(list).to_dict()
 							pos_alleles_back = {}
-			
+
 							#Then take the most commonly-represented allele from each position as the consensus read
 							#If there are multiple alleles equally represented, pick one allele at random
-							for key in pos_alleles_dict: 
+							for key in pos_alleles_dict:
 								reads = Counter(pos_alleles_dict[key])
 								allele = random.choice(reads.most_common()[0][0])
 								pos_alleles_back[key] = allele
-						
+
 							pos_alleles_dict.clear()
-					
+
 							#Recode this into a dataframe to be scored against the dom/min alleles databases
 							pos_alleles = pd.DataFrame.from_dict(pos_alleles_back, orient = 'index')
 							pos_alleles_back.clear()
@@ -666,34 +666,35 @@ def main():
 							print('Finished reading bam for: ' + ind, flush = True)
 							print('Number of loci scored: ', flush = True)
 							print(len(pos_alleles), flush = True)
+
 							mapped_SNPs[ind] = len(pos_alleles)
-							#output each individual to a dictionary with all individuals				
+							#output each individual to a dictionary with all individuals
 							#SNPs_dict[ind] = pos_alleles
-				
+
 							pos_alleles.to_csv(ind + '.csv', sep = '\t', index = False)
 							del pos_alleles
 					else:
 						pass
-	
+
 				print("BAM calling finished", flush = True)
-	
+
 
 			def bam_scoring(PWD, OUT):
-	
+
 				#global SNPs_dict
 				global score_AA
 				global score_BB
 				global score_AB
 				global divergent_snps
 				global divergent_snps_maf
-	
+
 				for f in os.listdir():
 					if f.endswith('.csv'):
 					#get the pileup database for each individual
 						ind = Path(f).stem
 						pileup_out = pd.read_csv(ind + '.csv', sep = '\t', index_col = None, skiprows=1, names=['CHROM','POS','ALLELES'],
 									 dtype='str')
-					
+
 						#compare the observed allele at each position with the dominant or minor allele
 						#in the divergent SNPs database
 						pileup_out['POS'] = pileup_out['POS'].astype(str)
@@ -703,57 +704,56 @@ def main():
 						divergent_MA = pd.DataFrame()
 						divergent_DA = divergent_snps
 						divergent_MA = divergent_snps_maf
-						print(divergent_DA.head(), flush = True)
-						
-						
+
+
 						divergent_DA['CHROM'] = divergent_DA['CHROM'].astype(str)
 						divergent_DA['POS'] = divergent_DA['POS'].astype(str)
 						divergent_MA['CHROM'] = divergent_MA['CHROM'].astype(str)
 						divergent_MA['POS'] = divergent_MA['POS'].astype(str)
-			
+
 						divergent_DA['position_AA'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_AA']].agg('.'.join, axis = 1)
 						divergent_DA['position_BB'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_BB']].agg('.'.join, axis = 1)
 						divergent_MA['position_AA'] = divergent_MA[['CHROM', 'POS', 'min_Allele_AA']].agg('.'.join, axis = 1)
 						divergent_MA['position_BB'] = divergent_MA[['CHROM', 'POS', 'min_Allele_BB']].agg('.'.join, axis = 1)
-		
+
 						#combine reads with the dominant and minor databases
 						matching = pd.merge(pileup_out, divergent_DA, on = 'POS')
 						matching = matching[['bam_position', 'AF_AA', 'AF_BB', 'position_AA', 'position_BB']]
 						matching_maf = pd.merge(pileup_out, divergent_MA, on = 'POS')
 						matching_maf = matching_maf[['bam_position', 'AF_AA', 'AF_BB', 'position_AA', 'position_BB']]
 						#create list of positions that match the dominant and minor alleles in the database
-			
+
 						matched_AA = list(matching[matching['bam_position'].isin(list(matching['position_AA']))]['bam_position'].unique())
 						matched_BB = list(matching[matching['bam_position'].isin(list(matching['position_BB']))]['bam_position'].unique())
-		
+
 						matched_maf_AA = list(matching_maf[matching_maf['bam_position'].isin(list(matching_maf['position_AA']))]['bam_position'].unique())
 						matched_maf_BB = list(matching_maf[matching_maf['bam_position'].isin(list(matching_maf['position_BB']))]['bam_position'].unique())
-		
+
 						#code the observed allele frequency as (1/2N + 1) by default
 						database_individuals = pd.read_csv(PWD + '/' + OUT + '_db_individuals.txt', names = ['IND'])
 						N=len(database_individuals)
 						expected_freq = (1/((2*N)+ 1))
-						matching['NEW_AF_AA'] = expected_freq 
-						matching['NEW_AF_BB'] = expected_freq 
-		
+						matching['NEW_AF_AA'] = expected_freq
+						matching['NEW_AF_BB'] = expected_freq
+
 						#for observed alleles that match the databases, score those as DAF or MAF
 
 						matched_idx_DA_AA = matching[matching['bam_position'].isin(matched_AA)].index
 						matched_idx_DA_BB = matching[matching['bam_position'].isin(matched_BB)].index
-		
+
 						if not matched_idx_DA_AA.empty:
 							matching.at[np.array(matched_idx_DA_AA),'NEW_AF_AA'] = matching['AF_AA']
 						if not matched_idx_DA_BB.empty:
 							matching.at[np.array(matched_idx_DA_BB),'NEW_AF_BB'] = matching['AF_BB']
-		
+
 						matched_idx_MA_AA = matching[matching['bam_position'].isin(matched_maf_AA)].index
 						matched_idx_MA_BB = matching[matching['bam_position'].isin(matched_maf_BB)].index
-			
+
 						if not matched_idx_MA_AA.empty:
 							matching.at[np.array(matched_idx_MA_AA),'NEW_AF_AA'] = matching_maf['AF_AA']
 						if not matched_idx_MA_BB.empty:
 							matching.at[np.array(matched_idx_MA_BB),'NEW_AF_BB'] = matching_maf['AF_BB']
-		
+
 						#if the MAF is 0, recode those positions again as (1/2N + 1)
 						divergent_DA = divergent_DA.mask(divergent_DA == '0').fillna(expected_freq)
 						divergent_MA = divergent_MA.mask(divergent_MA == '0').fillna(expected_freq)
@@ -763,14 +763,14 @@ def main():
 						divergent_DA = divergent_DA[['CHROM','POS','AF_AA','AF_BB','position_AA','position_BB']]
 						divergent_DA = divergent_DA.rename(columns = {'AF_AA':'AF_AA_DA', 'AF_BB':'AF_BB_DA',
 						'position_AA':'position_AA_DA', 'position_BB':'position_BB_DA'})
-			
+
 						divergent_MA = divergent_MA[['CHROM','POS','AF_AA','AF_BB','position_AA','position_BB']]
 						divergent_MA = divergent_MA.rename(columns = {'AF_AA':'AF_AA_MA', 'AF_BB':'AF_BB_MA',
 						'position_AA':'position_AA_MA', 'position_BB':'position_BB_MA'})
 						#merge these with the pileup reads
 						all_alleles = pd.merge(divergent_DA, divergent_MA, on = ['CHROM','POS'])
 						AB_match = pd.merge(pileup_out, all_alleles, on = ['CHROM','POS'])
-		
+
 						#Get the expected frequencies for heterozygotes
 						AB_match['AF_AA_DA'] = AB_match['AF_AA_DA'].astype(float)
 						AB_match['AF_BB_DA'] = AB_match['AF_BB_DA'].astype(float)
@@ -782,18 +782,18 @@ def main():
 						#now find where the reads match the alleles
 						matched_idx_AB_AA = AB_match[AB_match['bam_position'].isin(matched_AA)].index
 						matched_idx_AB_BB = AB_match[AB_match['bam_position'].isin(matched_BB)].index
-		
+
 						#code back to the original dataframe
 						matching = matching.mask(matching == 0.0).fillna(expected_freq)
-						matching['AF_AB'] = expected_freq 
-			
+						matching['AF_AB'] = expected_freq
+
 						if not matched_idx_AB_AA.empty:
 							matching.at[np.array(matched_idx_AB_AA),'AF_AB'] = AB_match['AF_AB_AA']
 						if not matched_idx_AB_BB.empty:
 							matching.at[np.array(matched_idx_AB_BB),'AF_AB'] = AB_match['AF_AB_BB']
 
-						matching_2 = matching 
-			
+						matching_2 = matching
+
 						if not matched_idx_DA_AA.empty or not matched_idx_MA_AA.empty:
 							matching['NEW_AF_AA'] = matching['NEW_AF_AA'].astype(str)
 							getcontext().prec=7
@@ -802,11 +802,11 @@ def main():
 							matching['NEW_AF_BB'] = matching['NEW_AF_BB'].astype(str)
 							getcontext().prec=7
 							matching['NEW_AF_BB'] = matching['NEW_AF_BB'].map(lambda x: Decimal(x))
-			
+
 						matching['AF_AB'] = matching['AF_AB'].astype(str)
 						getcontext().prec = 7
 						matching['AF_AB'] = matching['AF_AB'].map(lambda x: Decimal(x))
-			
+
 						#get joint probability of observed alleles given AA DOM database
 						if not matched_idx_DA_AA.empty or not matched_idx_MA_AA.empty:
 							probability_AA = matching['NEW_AF_AA'].prod()
@@ -818,67 +818,91 @@ def main():
 						else:
 							getcontext().prec = 2
 							probability_BB = Decimal(0.0)
-			
+
 						probability_AB = matching['AF_AB'].prod()
-			
+
 						score_AA[ind] = Decimal(probability_AA)
 						score_BB[ind] = Decimal(probability_BB)
 						score_AB[ind] = Decimal(probability_AB)
-	
+						print('ind', flush = True)
+						print(probability_AA, flush = True)
+						print(probability_BB, flush = True)
+						print(probability_AB, flush = True)
 						os.remove(f)
-			
+
 				print("BAMs scored", flush = True)
-	
+
 			def output_scores(PWD, OUT):
 				os.chdir(PWD)
-	
+
 				global score_AA
 				global score_BB
 				global score_AB
 				global unreadable
 				global mapped_SNPs
-	
+
 				if not unreadable:
 					AA_scores = pd.DataFrame.from_dict(score_AA, orient = 'index', columns = ['AA'])
 					AA_scores = AA_scores.reset_index()
 					AA_scores = AA_scores.rename(columns = {AA_scores.columns[0]: 'Individual'})
-	
+					print('AA_scores', flush = True)
+					print(AA_scores.head(), flush = True)
+
+
 					BB_scores = pd.DataFrame.from_dict(score_BB, orient = 'index', columns = ['BB'])
 					BB_scores = BB_scores.reset_index()
 					BB_scores = BB_scores.rename(columns = {BB_scores.columns[0]: 'Individual'})
-		
+					print('BB scores', flush = True)
+					print(BB_scores.head(), flush = True)
+
 					AB_scores = pd.DataFrame.from_dict(score_AB, orient = 'index', columns = ['AB'])
 					AB_scores = AB_scores.reset_index()
 					AB_scores = AB_scores.rename(columns = {AB_scores.columns[0]: 'Individual'})
-		
+					print('AB_scores', flush = True)
+					print(AB_scores.head(), flush = True)
+
 					map_SNPs = pd.DataFrame.from_dict(mapped_SNPs, orient = 'index', columns = ['SNPs'])
 					map_SNPs = map_SNPs.reset_index()
 					map_SNPs = map_SNPs.rename(columns = {map_SNPs.columns[0]: 'Individual'})
-		
+					print('map_SNPs', flush = True)
+					print(map_SNPs.head(), flush = True)
+
 					AA_BB = pd.merge(AA_scores, BB_scores, on = 'Individual')
 					AA_BB_AB = pd.merge(AA_BB, AB_scores, on = 'Individual')
 					inversion_scores = pd.merge(AA_BB_AB, map_SNPs, on = 'Individual')
-		
+					print('AA_BB', flush = True)
+					print(AA_BB.head(), flush = True)
+					print('AA_BB_AB', flush = True)
+					print(AA_BB_AB.head(), flush = True)
+					print('inversion_scores', flush = True)
+					print(inversion_scores.head(), flush = True)
+
 					#scale the probabilities to 1
+					no_match = inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0) & (inversion_scores['AB'] == 0)]
+					inversion_scores.drop((inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0) & (inversion_scores['AB'] == 0)]).index, inplace =True)
+
 					inversion_scores['scaled_prob_AA'] = inversion_scores['AA']/(inversion_scores['AA'] + inversion_scores['BB'] + inversion_scores['AB'])
 					inversion_scores['scaled_prob_BB'] = inversion_scores['BB']/(inversion_scores['AA'] + inversion_scores['BB'] + inversion_scores['AB'])
 					inversion_scores['scaled_prob_AB'] = inversion_scores['AB']/(inversion_scores['AA'] + inversion_scores['BB'] + inversion_scores['AB'])
-				
+
 					inversion_scores['scaled_prob_AA'] = inversion_scores['scaled_prob_AA'].astype(float)
 					inversion_scores['scaled_prob_BB'] = inversion_scores['scaled_prob_BB'].astype(float)
 					inversion_scores['scaled_prob_AB'] = inversion_scores['scaled_prob_AB'].astype(float)
-		
+
 					inversion_scores = inversion_scores[['Individual', 'scaled_prob_AA', 'scaled_prob_BB', 'scaled_prob_AB', 'SNPs']].sort_values(by='Individual').round(decimals=3)
-				
+					print('inversion_scores', flush = True)
+					print(inversion_scores.head(), flush = True)
+
 					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB', 'scaled_prob_AB':'AB'})
-					inversion_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
-		
-	
+					all_scores = pd.concat([inversion_scores, no_match]).sort_values(by='Individual')
+					all_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
+
+
 				else:
 					AA_scores = pd.DataFrame.from_dict(score_AA, orient = 'index', columns = ['AA'])
 					AA_scores = AA_scores.reset_index()
 					AA_scores = AA_scores.rename(columns = {AA_scores.columns[0]: 'Individual'})
-	
+
 					BB_scores = pd.DataFrame.from_dict(score_BB, orient = 'index', columns = ['BB'])
 					BB_scores = BB_scores.reset_index()
 					BB_scores = BB_scores.rename(columns = {BB_scores.columns[0]: 'Individual'})
@@ -886,44 +910,66 @@ def main():
 					AB_scores = pd.DataFrame.from_dict(score_AB, orient = 'index', columns = ['AB'])
 					AB_scores = AB_scores.reset_index()
 					AB_scores = AB_scores.rename(columns = {AB_scores.columns[0]: 'Individual'})
-			
+
 					map_SNPs = pd.DataFrame.from_dict(mapped_SNPs, orient = 'index', columns = ['SNPs'])
 					map_SNPs = map_SNPs.reset_index()
 					map_SNPs = map_SNPs.rename(columns = {map_SNPs.columns[0]: 'Individual'})
-		
+
 					AA_BB = pd.merge(AA_scores, BB_scores, on = 'Individual')
 					AA_BB_AB = pd.merge(AA_BB, AB_scores, on = 'Individual')
 					inversion_scores = pd.merge(AA_BB_AB, map_SNPs, on = 'Individual')
 
-					unreadable = pd.DataFrame.from_dict(unreadable, orient = 'index', columns = ['Prob AA'])
+					unreadable = pd.DataFrame.from_dict(unreadable, orient = 'index', columns = ['AA'])
 					unreadable = unreadable.reset_index()
 					unreadable = unreadable.rename(columns = {unreadable.columns[0]: 'Individual'})
-					unreadable['Prob BB'] = unreadable['Prob AA']
-					unreadable['Prob AB'] = unreadable['Prob AA']
-					unreadable['SNPs'] = 0 
+					unreadable['BB'] = unreadable['AA']
+					unreadable['AB'] = unreadable['AA']
+					unreadable['SNPs'] = 0
 
 					#scale the probabilities to 1
-		
+					no_match = inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0) & (inversion_scores['AB'] == 0)]
+					inversion_scores.drop((inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0)]).index, inplace = True)
+
 					inversion_scores['scaled_prob_AA'] = inversion_scores['AA']/(inversion_scores['AA'] + inversion_scores['BB'] + inversion_scores['AB'])
 					inversion_scores['scaled_prob_BB'] = inversion_scores['BB']/(inversion_scores['AA'] + inversion_scores['BB'] + inversion_scores['AB'])
 					inversion_scores['scaled_prob_AB'] = inversion_scores['AB']/(inversion_scores['AA'] + inversion_scores['BB'] + inversion_scores['AB'])
-				
+
 					inversion_scores['scaled_prob_AA'] = inversion_scores['scaled_prob_AA'].astype(float)
 					inversion_scores['scaled_prob_BB'] = inversion_scores['scaled_prob_BB'].astype(float)
 					inversion_scores['scaled_prob_AB'] = inversion_scores['scaled_prob_AB'].astype(float)
-		
-					inversion_scores = inversion_scores[['Individual', 'scaled_prob_AA', 'scaled_prob_BB', 'scaled_prob_AB', 'SNPs']].sort_values(by='Individual').round(decimals=3)
-		
-					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'Prob AA', 'scaled_prob_BB':'Prob BB', 'scaled_prob_AB':'Prob AB'})
 
-					all_scores = pd.concat([unreadable, inversion_scores]).sort_values(by = 'Individual')
+					inversion_scores = inversion_scores[['Individual', 'scaled_prob_AA', 'scaled_prob_BB', 'scaled_prob_AB', 'SNPs']].sort_values(by='Individual').round(decimals=3)
+
+					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB', 'scaled_prob_AB':'AB'})
+					unreadable_scores = pd.concat([unreadable, inversion_scores]).sort_values(by = 'Individual')
+					all_scores = pd.concat([unreadable_scores, inversion_scores]).sort_values(by = 'Individual')
+
+					print('AA_scores', flush = True)
+					print(AA_scores.head(), flush = True)
+					print('BB_scores', flush = True)
+					print(BB_scores.head(), flush = True)
+					print('AB_scores', flush = True)
+					print(AB_scores.head(), flush = True)
+					print('map_snps', flush = True)
+					print(map_SNPs.head(), flush = True)
+					print('AA_BB', flush = True)
+					print(AA_BB.head(), flush = True)
+					print('AA_BB_AB', flush = True)
+					print(AA_BB_AB.head(), flush = True)
+					print('inversion_scores', flush = True)
+					print(inversion_scores.head(), flush = True)
+					print('all_scores', flush = True)
+					print(all_scores.head(), flush = True)
+					print('unreadable', flush = True)
+					print(unreadable.head(), flush = True)
+
 
 					all_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
-	
+
 				print("Outputting BAM scores to " + OUT + '_scores.txt')
-		
-		
-			if args.nofrq: 
+
+
+			if args.nofrq:
 				index_bams(BAM, PWD)
 				make_database(OUT, ABS)
 				call_bams(BAM)
@@ -939,12 +985,12 @@ def main():
 			else:
 				print('score_bams could not run. Have you input all your arguments correctly?')
 				pass
-				
+
 		elif args.wg:
 
 			def index_bams(BAM, PWD):
 				os.chdir(BAM)
-	
+
 				for f in os.listdir():
 					ind = Path(f).stem
 					if os.path.exists(ind + '.bai') or os.path.exists(ind + '.bam.bai'):
@@ -952,7 +998,7 @@ def main():
 					else:
 						index = subprocess.Popen('samtools index ' + f, shell = True)
 						index.communicate()
-					
+
 				os.chdir(PWD)
 
 			#First, use VCFtools to get SNP frequency data from each of the fixed haplotypes
@@ -965,7 +1011,7 @@ def main():
 				BB_freq = subprocess.Popen('vcftools --gzvcf ' + VCF + ' \
 					--keep ' + OUT + '_BB_individuals.txt --positions ' + OUT + '.divergent_SNPs.txt \
 					--freq --out ' + OUT + '_BB_SNPs', shell = True)
-	
+
 				AA_freq.communicate()
 				BB_freq.communicate()
 
@@ -976,7 +1022,7 @@ def main():
 					usecols=[0, 1, 4, 5],
 					names=['CHROM','POS','REF_AF','ALT_AF'],
 					dtype=str)
-	
+
 				AA_freq['REF'] = AA_freq['REF_AF'].str.split(':').map(lambda x: x[0])
 				AA_freq['REF_AF'] = AA_freq['REF_AF'].str.split(':').map(lambda x: x[1])
 				AA_freq['ALT'] = AA_freq['ALT_AF'].str.split(':').map(lambda x: x[0])
@@ -984,105 +1030,105 @@ def main():
 				#2. Split REF and ALT alleles that are fixed for AA
 				AA_REF_freq = pd.DataFrame(AA_freq, columns = ['CHROM', 'POS', 'REF_AF', 'REF'])
 				AA_ALT_freq = pd.DataFrame(AA_freq, columns = ['CHROM', 'POS', 'ALT_AF', 'ALT'])
-	
+
 				del AA_freq
-	
+
 				#3. Filter for major and minor alleles -- create two datasets
 				AA_REF_daf = AA_REF_freq.loc[AA_REF_freq['REF_AF'].astype(float) >= 0.5]
 				AA_ALT_daf = AA_ALT_freq.loc[AA_ALT_freq['ALT_AF'].astype(float) >= 0.5]
-	
+
 				AA_REF_maf = AA_REF_freq.loc[AA_REF_freq['REF_AF'].astype(float) < 0.5]
 				AA_ALT_maf = AA_ALT_freq.loc[AA_ALT_freq['ALT_AF'].astype(float) < 0.5]
-	
+
 				del AA_REF_freq
 				del AA_ALT_freq
-	
+
 				#4. Recode these as dominant or minor alleles in the AA haplotype
-				AA_REF_daf = AA_REF_daf.rename(columns = {'REF': 'dom_Allele_AA', 
+				AA_REF_daf = AA_REF_daf.rename(columns = {'REF': 'dom_Allele_AA',
 				'REF_AF': 'AF_AA'})
-				AA_ALT_daf = AA_ALT_daf.rename(columns = {'ALT': 'dom_Allele_AA', 
+				AA_ALT_daf = AA_ALT_daf.rename(columns = {'ALT': 'dom_Allele_AA',
 				'ALT_AF': 'AF_AA'})
-	
-				AA_REF_maf = AA_REF_maf.rename(columns = {'REF': 'min_Allele_AA', 
+
+				AA_REF_maf = AA_REF_maf.rename(columns = {'REF': 'min_Allele_AA',
 				'REF_AF': 'AF_AA'})
-				AA_ALT_maf = AA_ALT_maf.rename(columns = {'ALT': 'min_Allele_AA', 
+				AA_ALT_maf = AA_ALT_maf.rename(columns = {'ALT': 'min_Allele_AA',
 				'ALT_AF': 'AF_AA'})
-	
+
 				#5. Combine these into a two databases -- dominant/minor alleles for the AA haplotype
 				AA_DOM = pd.concat([AA_REF_daf, AA_ALT_daf])
 				AA_MIN = pd.concat([AA_REF_maf, AA_ALT_maf])
-	
+
 				del AA_REF_daf
 				del AA_ALT_daf
 				del AA_REF_maf
 				del AA_ALT_maf
-	
+
 				#Now do the same for the BB haplotype
 				BB_freq = pd.read_csv(OUT + '_BB_SNPs.frq', sep = '\t', index_col = None, skiprows=1,
 					usecols=[0, 1, 4, 5],
 					names=['CHROM','POS','REF_AF','ALT_AF'],
 					dtype=str)
-	
+
 				BB_freq['REF'] = BB_freq['REF_AF'].str.split(':').map(lambda x: x[0])
 				BB_freq['REF_AF'] = BB_freq['REF_AF'].str.split(':').map(lambda x: x[1])
 				BB_freq['ALT'] = BB_freq['ALT_AF'].str.split(':').map(lambda x: x[0])
 				BB_freq['ALT_AF'] = BB_freq['ALT_AF'].str.split(':').map(lambda x: x[1])
-	
+
 				BB_REF_freq = pd.DataFrame(BB_freq, columns = ['CHROM', 'POS', 'REF_AF', 'REF'])
 				BB_ALT_freq = pd.DataFrame(BB_freq, columns = ['CHROM', 'POS', 'ALT_AF', 'ALT'])
-	
+
 				del BB_freq
-		
+
 				BB_REF_daf = BB_REF_freq.loc[BB_REF_freq['REF_AF'].astype(float) >= 0.5]
 				BB_ALT_daf = BB_ALT_freq.loc[BB_ALT_freq['ALT_AF'].astype(float) >= 0.5]
-	
+
 				BB_REF_maf = BB_REF_freq.loc[BB_REF_freq['REF_AF'].astype(float) < 0.5]
 				BB_ALT_maf = BB_ALT_freq.loc[BB_ALT_freq['ALT_AF'].astype(float) < 0.5]
-	
+
 				del BB_REF_freq
 				del BB_ALT_freq
-	
-				BB_REF_daf = BB_REF_daf.rename(columns = {'REF': 'dom_Allele_BB', 
+
+				BB_REF_daf = BB_REF_daf.rename(columns = {'REF': 'dom_Allele_BB',
 				'REF_AF': 'AF_BB'})
-				BB_ALT_daf = BB_ALT_daf.rename(columns = {'ALT': 'dom_Allele_BB', 
+				BB_ALT_daf = BB_ALT_daf.rename(columns = {'ALT': 'dom_Allele_BB',
 				'ALT_AF': 'AF_BB'})
-	
-				BB_REF_maf = BB_REF_maf.rename(columns = {'REF': 'min_Allele_BB', 
+
+				BB_REF_maf = BB_REF_maf.rename(columns = {'REF': 'min_Allele_BB',
 				'REF_AF': 'AF_BB'})
-				BB_ALT_maf = BB_ALT_maf.rename(columns = {'ALT': 'min_Allele_BB', 
+				BB_ALT_maf = BB_ALT_maf.rename(columns = {'ALT': 'min_Allele_BB',
 				'ALT_AF': 'AF_BB'})
-	
+
 				BB_DOM = pd.concat([BB_REF_daf, BB_ALT_daf])
 				BB_MIN = pd.concat([BB_REF_maf, BB_ALT_maf])
-			
+
 				del BB_REF_daf
 				del BB_ALT_daf
 				del BB_REF_maf
 				del BB_ALT_maf
-	
+
 				global divergent_snps
 				divergent_snps = pd.merge(AA_DOM, BB_DOM, on = ['CHROM','POS'])
 				divergent_snps['POS_minus1'] = pd.to_numeric(divergent_snps['POS']).apply(lambda x: x -1)
-	
+
 				global divergent_snps_maf
 				divergent_snps_maf = pd.merge(AA_MIN, BB_MIN, on = ['CHROM','POS'])
-	
+
 				divergent_snps['AF_AA'] = divergent_snps['AF_AA'].astype(float)
 				divergent_snps['AF_BB'] = divergent_snps['AF_BB'].astype(float)
 				divergent_snps_maf['AF_AA'] = divergent_snps_maf['AF_AA'].astype(float)
 				divergent_snps_maf['AF_BB'] = divergent_snps_maf['AF_BB'].astype(float)
 				divergent_snps['AA_ABS'] = abs(divergent_snps['AF_AA'] - divergent_snps['AF_BB'])
 				divergent_snps['BB_ABS'] = abs(divergent_snps['AF_BB'] - divergent_snps['AF_AA'])
-	
+
 				divergent_snps = divergent_snps.loc[divergent_snps['AA_ABS'] >= ABS]
 				divergent_snps = divergent_snps.loc[divergent_snps['BB_ABS'] >= ABS]
-	
+
 				divergent_snps_maf['AA_ABS'] = abs(divergent_snps_maf['AF_AA'] - divergent_snps_maf['AF_BB'])
 				divergent_snps_maf['BB_ABS'] = abs(divergent_snps_maf['AF_BB'] - divergent_snps_maf['AF_AA'])
-	
+
 				divergent_snps_maf = divergent_snps_maf.loc[divergent_snps_maf['AA_ABS'] >= ABS]
 				divergent_snps_maf = divergent_snps_maf.loc[divergent_snps_maf['BB_ABS'] >= ABS]
-	
+
 				del AA_DOM
 				del AA_MIN
 				del BB_DOM
@@ -1091,19 +1137,19 @@ def main():
 				#one for the BB haplotype (AA_DOM and BB_DOM) and two for the minor alleles
 				#These databases include: CHROM, POS, N_ALLELES, N_CHR, AF, dom_Allele
 				#chromosome, position, number of alleles at this position, number of individuals
-				#with this position, Allele frequency of the dominant allele, 
+				#with this position, Allele frequency of the dominant allele,
 				#and the dominant allele genotype
-	
+
 				#We also have a divergent SNPs database to call positions
-				#AA and BB are combined to score probability of source population based on 
-				#joint likelihood of all the positions present belonging to homozygote AA, BB, or 
+				#AA and BB are combined to score probability of source population based on
+				#joint likelihood of all the positions present belonging to homozygote AA, BB, or
 				#heterozygote AB
-	
+
 				#we will use the dominant allele databases to call positions (but it could be done with either)
-				#Add one column with the preceding allele position so can call from BAMs 
+				#Add one column with the preceding allele position so can call from BAMs
 
 			#use these databases to score snps after calling from the bams with pysam
-					
+
 			def call_bams(BAM):
 				#Move into the BAM directory
 				os.chdir(BAM)
@@ -1111,19 +1157,19 @@ def main():
 				global divergent_snps
 				#global SNPS_dict
 				global unreadable
-		
+
 				global mapped_SNPs
-			
+
 				#iterate over the bams in the directory
 				for f in os.listdir():
 					if f.endswith('.bam'):
 						ind, bam = Path(f).stem, pysam.AlignmentFile(f, 'rb')
-			
+
 						#create dictionaries to store alleles and positions
 						alleles = []
 						pos_bam = []
 						chrom = []
-			
+
 						#iterate through the dominant allele dataframes
 						#apologize to the Python gods for iterating through a df
 						for row in divergent_snps.itertuples():
@@ -1133,8 +1179,8 @@ def main():
 										if pileupcolumn.pos == int(row.POS_minus1):
 											chrom.append(str(row.CHROM))
 											pos_bam.append(pileupcolumn.pos)
-											alleles.append(pileupread.alignment.query_sequence[pileupread.query_position])			
-			
+											alleles.append(pileupread.alignment.query_sequence[pileupread.query_position])
+
 						bam.close()
 						#if no positions could be read, output "too few reads" to the dictionary
 						if not alleles:
@@ -1147,21 +1193,21 @@ def main():
 							pos_alleles = pd.DataFrame(pos_alleles, columns = ['CHROM','POS_minus1', 'ALLELES'])
 							pos_alleles['POS_minus1'] = pos_alleles['POS_minus1'].astype(str)
 							pos_alleles['position'] = pos_alleles[['CHROM', 'POS_minus1']].agg('.'.join, axis=1)
-				
-							#get consensus reads for each position... 
+
+							#get consensus reads for each position...
 							pos_alleles = pos_alleles[['position', 'ALLELES']]
 							pos_alleles_dict = pos_alleles.groupby(['position'])['ALLELES'].apply(list).to_dict()
 							pos_alleles_back = {}
-			
+
 							#Then take the most commonly-represented allele from each position as the consensus read
 							#If there are multiple alleles equally represented, pick one allele at random
-							for key in pos_alleles_dict: 
+							for key in pos_alleles_dict:
 								reads = Counter(pos_alleles_dict[key])
 								allele = random.choice(reads.most_common()[0][0])
 								pos_alleles_back[key] = allele
-						
+
 							pos_alleles_dict.clear()
-				
+
 							#Recode this into a dataframe to be scored against the dom/min alleles databases
 							pos_alleles = pd.DataFrame.from_dict(pos_alleles_back, orient = 'index')
 							pos_alleles_back.clear()
@@ -1174,31 +1220,31 @@ def main():
 							print('Finished reading bam for: ' + ind, flush = True)
 							print('Number of loci scored: ', flush = True)
 							print(len(pos_alleles), flush = True)
-							
+
 							mapped_SNPs[ind] = len(pos_alleles)
-							#output each individual to a dictionary with all individuals				
+							#output each individual to a dictionary with all individuals
 							#SNPs_dict[ind] = pos_alleles
-				
+
 							pos_alleles.to_csv(ind + '.csv', sep = '\t', index = False)
 							del pos_alleles
 					else:
 						pass
-	
+
 				print("BAM calling finished", flush = True)
-	
+
 
 			def bam_scoring(PWD, OUT):
-		
+
 				prob_AA = {}
 				prob_BB = {}
-	
+
 				#global SNPs_dict
 				global score_AA
 				global score_BB
-	
+
 				global divergent_snps
 				global divergent_snps_maf
-	
+
 				for f in os.listdir():
 					if f.endswith('.csv'):
 					#get the pileup database for each individual
@@ -1214,98 +1260,98 @@ def main():
 						divergent_MA = pd.DataFrame()
 						divergent_DA = divergent_snps
 						divergent_MA = divergent_snps_maf
-	
+
 						divergent_DA['CHROM'] = divergent_DA['CHROM'].astype(str)
 						divergent_DA['POS'] = divergent_DA['POS'].astype(str)
 						divergent_MA['CHROM'] = divergent_MA['CHROM'].astype(str)
 						divergent_MA['POS'] = divergent_MA['POS'].astype(str)
-			
+
 						divergent_DA['position_AA'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_AA']].agg('.'.join, axis = 1)
 						divergent_DA['position_BB'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_BB']].agg('.'.join, axis = 1)
 						divergent_MA['position_AA'] = divergent_MA[['CHROM', 'POS', 'min_Allele_AA']].agg('.'.join, axis = 1)
 						divergent_MA['position_BB'] = divergent_MA[['CHROM', 'POS', 'min_Allele_BB']].agg('.'.join, axis = 1)
-			
+
 						#combine reads with the dominant and minor databases
 						matching = pd.merge(pileup_out, divergent_DA, on = 'POS')
 						matching = matching[['bam_position', 'AF_AA', 'AF_BB', 'position_AA', 'position_BB']]
 						matching_maf = pd.merge(pileup_out, divergent_MA, on = 'POS')
 						matching_maf = matching_maf[['bam_position', 'AF_AA', 'AF_BB', 'position_AA', 'position_BB']]
-			
+
 						#create list of positions that match the dominant and minor alleles in the database
 						matched_AA = list(matching[matching['bam_position'].isin(list(matching['position_AA']))]['bam_position'].unique())
 						matched_BB = list(matching[matching['bam_position'].isin(list(matching['position_BB']))]['bam_position'].unique())
-				
+
 						matched_maf_AA = list(matching_maf[matching_maf['bam_position'].isin(list(matching_maf['position_AA']))]['bam_position'].unique())
 						matched_maf_BB = list(matching_maf[matching_maf['bam_position'].isin(list(matching_maf['position_BB']))]['bam_position'].unique())
-		
+
 						#code the observed allele frequency as (1/2N + 1) by default
 						database_individuals = pd.read_csv(PWD + '/' + OUT + '_db_individuals.txt', names = ['IND'])
 						N=len(database_individuals)
 						expected_freq = (1/((2*N)+ 1))
-						matching['NEW_AF_AA'] = expected_freq 
-						matching['NEW_AF_BB'] = expected_freq 
-	
+						matching['NEW_AF_AA'] = expected_freq
+						matching['NEW_AF_BB'] = expected_freq
+
 						#for observed alleles that match the databases, score those as DAF or MAF
 						matched_idx_DA_AA = matching[matching['bam_position'].isin(matched_AA)].index
 						matched_idx_DA_BB = matching[matching['bam_position'].isin(matched_BB)].index
-		
+
 						if not matched_idx_DA_AA.empty:
 							matching.at[np.array(matched_idx_DA_AA),'NEW_AF_AA'] = matching['AF_AA']
 						if not matched_idx_DA_BB.empty:
 							matching.at[np.array(matched_idx_DA_BB),'NEW_AF_BB'] = matching['AF_BB']
-				
+
 						matched_idx_MA_AA = matching[matching['bam_position'].isin(matched_maf_AA)].index
 						matched_idx_MA_BB = matching[matching['bam_position'].isin(matched_maf_BB)].index
-			
+
 						if not matched_idx_MA_AA.empty:
 							matching.at[np.array(matched_idx_MA_AA),'NEW_AF_AA'] = matching_maf['AF_AA']
 						if not matched_idx_MA_BB.empty:
 							matching.at[np.array(matched_idx_MA_BB),'NEW_AF_BB'] = matching_maf['AF_BB']
-			
+
 						#if the MAF is 0, recode those positions again as (1/2N + 1)
 						matching = matching.mask(matching == 0.0).fillna(expected_freq)
-				
+
 						if not matched_idx_DA_AA.empty or not matched_idx_MA_AA.empty:
 							matching['NEW_AF_AA'] = matching['NEW_AF_AA'].astype(str)
 							matching['NEW_AF_AA'] = matching['NEW_AF_AA'].map(lambda x: Decimal(x))
 						if not matched_idx_DA_BB.empty or not matched_idx_DA_BB.empty:
 							matching['NEW_AF_BB'] = matching['NEW_AF_BB'].astype(str)
 							matching['NEW_AF_BB'] = matching['NEW_AF_BB'].map(lambda x: Decimal(x))
-				
+
 						#get joint probability of observed alleles given AA DOM database
 						if not matched_idx_DA_AA.empty or not matched_idx_MA_AA.empty:
 							probability_AA = matching['NEW_AF_AA'].prod()
 						else:
 							getcontext().prec = 2
 							probability_AA = Decimal(0)
-				
+
 						if not matched_idx_DA_BB.empty or not matched_idx_DA_BB.empty:
 							probability_BB = matching['NEW_AF_BB'].prod()
 						else:
 							getcontext().prec = 2
 							probability_BB = Decimal(0)
-			
+
 						score_AA[ind] = Decimal(probability_AA)
 						score_BB[ind] = Decimal(probability_BB)
-			
+
 						os.remove(f)
 
 				print("BAMs scored", flush = True)
 
 			def output_scores(PWD, OUT):
 				os.chdir(PWD)
-	
+
 				global score_AA
 				global score_BB
 				global score_AB
 				global unreadable
 				global mapped_SNPs
-	
+
 				if not unreadable:
 					AA_scores = pd.DataFrame.from_dict(score_AA, orient = 'index', columns = ['AA'])
 					AA_scores = AA_scores.reset_index()
 					AA_scores = AA_scores.rename(columns = {AA_scores.columns[0]: 'Individual'})
-		
+
 					BB_scores = pd.DataFrame.from_dict(score_BB, orient = 'index', columns = ['BB'])
 					BB_scores = BB_scores.reset_index()
 					BB_scores = BB_scores.rename(columns = {BB_scores.columns[0]: 'Individual'})
@@ -1313,23 +1359,49 @@ def main():
 					map_SNPs = pd.DataFrame.from_dict(mapped_SNPs, orient = 'index', columns = ['SNPs'])
 					map_SNPs = map_SNPs.reset_index()
 					map_SNPs = map_SNPs.rename(columns = {map_SNPs.columns[0]: 'Individual'})
-		
+
 					AA_BB = pd.merge(AA_scores, BB_scores, on = 'Individual')
 					inversion_scores = pd.merge(AA_BB, map_SNPs, on = 'Individual')
 
+					#print('Inversion scores', flush = True)
+					#print(inversion_scores, flush=True)
+
 					#scale the probabilities to 1
+
+					#pull out any loci that didn't match either database
+					#no_match = []
+					no_match = inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0)]
+					#no_match = no_match.rename(columns = {'AA': 'Prob AA', 'BB':'Prob BB'})
+					#no_match['AA'] = 'no match'
+					#no_match['BB'] = 'no match'
+					#remove them from the database for calculation
+
+					inversion_scores.drop((inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0)]).index, inplace = True)
+
 					inversion_scores['scaled_prob_AA'] = inversion_scores['AA']/(inversion_scores['AA'] + inversion_scores['BB'])
 					inversion_scores['scaled_prob_BB'] = inversion_scores['BB']/(inversion_scores['AA'] + inversion_scores['BB'])
-		
+
 					inversion_scores['scaled_prob_AA'] = inversion_scores['scaled_prob_AA'].astype(float)
 					inversion_scores['scaled_prob_BB'] = inversion_scores['scaled_prob_BB'].astype(float)
-		
+
 					inversion_scores = inversion_scores[['Individual', 'scaled_prob_AA', 'scaled_prob_BB', 'SNPs']].sort_values(by='Individual').round(decimals=3)
 					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB'})
-					inversion_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
-		
+					all_scores = pd.concat([inversion_scores, no_match]).sort_values(by='Individual')
+					all_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
+
+					print('AA_scores', flush = True)
+					print(AA_scores.head(), flush = True)
+					print('BB_scores', flush = True)
+					print(BB_scores.head(), flush = True)
+					print('map_snps', flush = True)
+					print(map_SNPs.head(), flush = True)
+					print('AA_BB', flush = True)
+					print(AA_BB.head(), flush = True)
+					print('inversion_scores', flush	= True)
+					print(inversion_scores.head(), flush = True)
+
 				else:
-	
+
 					AA_scores = pd.DataFrame.from_dict(score_AA, orient = 'index', columns = ['AA'])
 					AA_scores = AA_scores.reset_index()
 					AA_scores = AA_scores.rename(columns = {AA_scores.columns[0]: 'Individual'})
@@ -1337,40 +1409,54 @@ def main():
 					BB_scores = pd.DataFrame.from_dict(score_BB, orient = 'index', columns = ['BB'])
 					BB_scores = BB_scores.reset_index()
 					BB_scores = BB_scores.rename(columns = {BB_scores.columns[0]: 'Individual'})
-		
+
 					map_SNPs = pd.DataFrame.from_dict(mapped_SNPs, orient = 'index', columns = ['SNPs'])
 					map_SNPs = map_SNPs.reset_index()
 					map_SNPs = map_SNPs.rename(columns = {map_SNPs.columns[0]: 'Individual'})
-		
+
 					AA_BB = pd.merge(AA_scores, BB_scores, on = 'Individual')
 					inversion_scores = pd.merge(AA_BB, map_SNPs, on = 'Individual')
 
-					unreadable = pd.DataFrame.from_dict(unreadable, orient = 'index', columns = ['Prob AA'])
+					unreadable = pd.DataFrame.from_dict(unreadable, orient = 'index', columns = ['AA'])
 					unreadable = unreadable.reset_index()
 					unreadable = unreadable.rename(columns = {unreadable.columns[0]: 'Individual'})
-					unreadable['Prob BB'] = unreadable['Prob AA']
-					unreadable['SNPs'] = 0 
-		
+					unreadable['BB'] = unreadable['AA']
+					unreadable['SNPs'] = 0
+
 					#scale the probabilities to 1
+
+					#print('inversion scores unreadable', flush=True)
+					#print(inversion_scores, flush=True)
+
+
+					#no_match = []
+					no_match = inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0)]
+					#no_match = no_match.rename(columns = {'AA': 'Prob AA', 'BB':'Prob BB'})
+					#print(no_match, flush = True)
+					#no_match['AA'] = 'no match'
+					#no_match['BB'] = 'no match'
+
+					inversion_scores.drop((inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0)]).index, inplace = True)
+
 
 					inversion_scores['scaled_prob_AA'] = inversion_scores['AA']/(inversion_scores['AA'] + inversion_scores['BB'])
 					inversion_scores['scaled_prob_BB'] = inversion_scores['BB']/(inversion_scores['AA'] + inversion_scores['BB'])
-		
+
 					inversion_scores['scaled_prob_AA'] = inversion_scores['scaled_prob_AA'].astype(float)
 					inversion_scores['scaled_prob_BB'] = inversion_scores['scaled_prob_BB'].astype(float)
-		
+
 					inversion_scores = inversion_scores[['Individual', 'scaled_prob_AA', 'scaled_prob_BB', 'SNPs']].sort_values(by='Individual').round(decimals=3)
-					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'Prob AA', 'scaled_prob_BB':'Prob BB'})
-		
-					all_scores = pd.concat([unreadable, inversion_scores]).sort_values(by = 'Individual')
-		
+					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB'})
+
+					unreadable_scores = pd.concat([unreadable, inversion_scores]).sort_values(by = 'Individual')
+					all_scores = pd.concat([unreadable_scores,no_match]).sort_values(by='Individual')
 					all_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
-	
+
 				print("Outputting BAM scores to " + OUT + '_scores.txt')
 
-		
-		
-			if args.nofrq: 
+
+
+			if args.nofrq:
 				index_bams(BAM, PWD)
 				make_database(OUT, ABS)
 				call_bams(BAM)
@@ -1386,9 +1472,9 @@ def main():
 			else:
 				print('score_bams could not run. Have you input all your arguments correctly?')
 				pass
-		
+
 	else:
 		print('Did you specify select_snps or score_bams?')
-	
+
 if __name__ == '__main__':
 	main()
