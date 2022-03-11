@@ -27,6 +27,7 @@ README \
 Utility scripts for visualization/data prep
 
 **please note: BAMscorer requires glibc_2.17 or above
+**BAMscorer_v1_linux allows individuals with no matching alleles to the reference database to be output as "no match". The Mac binary currently does not allow this and will throw an error if there is an individual in the scoring database that does not match either of the reference databases at any of the loci under consideration. If you experience this error, please remove that individual and re-run BAMscorer. We will provide an update to the Mac binary soon.
 
 ## Running BAMscorer
 
