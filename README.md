@@ -28,8 +28,6 @@ Utility scripts for visualization/data prep
 
 **please note: BAMscorer requires glibc_2.17 or above
 
-**N.B. new binaries have been updated 22.07.21 with --numchrom argument added as well as a patch for the linux binary, which had an error associated with alignment files with too few reads for scoring :)
-
 ## Running BAMscorer
 
 There are two main modules within BAMscorer: select_snps and score_bams
@@ -66,6 +64,8 @@ To run select_snps on the test data use this command from the BAMscorer director
 BAMscorer select_snps test_data/LG01_testdata.vcf.gz test_data/LG01 --map test_data/chrom_map
 
 Arguments 1 and 2 are required to run the program and merely point to the input VCF file and the output prefix. The VCF file should be bgzipped.
+
+**There is currently an issue with converting from VCF using the --include and --map arguments with species that have >26 chromosomes.  Currently, conversion to PLINK using VCFtools (around which BAMscorer is wrapped) does not allow specifying >26 chromosomes. If you have a genome with a large number of scaffolds, we recommend renaming these scaffolds as integers within the VCF file prior to inputting into BAMscorer. When inputting into BAMscorer you will then not require the arg --map. If you would like a specific region of this VCF, please pre-select it prior to running BAMscorer to avoid the --include argument. Remember to use the arg --num-chrom to set the number of chromosomes so PLINK does not cut off chromosomes >22. Note that --num-chrom is capped at 95, since PLINK only allows up to 95 chromosomes. We recommend scaffold binning if you have >95 contigs.**
 
 OPTIONAL ARGUMENTS: \
 **--include** points to a BED file with specified regions to pass to VCFtools. Using --include means the script will only process sites within these regions. The BED should be tab-delimited and with headers(CHR\t START\t END). If the VCF file has not already been sliced to include only the inversion, this will allow the user to select just the inversion site for analysis. If your VCF has already been cut to the inversion site this argument can be ignored. Note: If the prefix of the .bed file is the same as the OUT prefix this file will be rewritten when the VCF is converted to PLINK format. It is also much faster to run the program on a VCF file that has already been split to just the inversion site, particularly if the genome in question is large.
