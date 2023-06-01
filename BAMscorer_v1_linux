@@ -32,6 +32,12 @@ score_AB = {}
 
 mapped_SNPs = {}
 
+def convertWeight(weight_arg):
+	if weight_arg.isdigit():
+		return int(weight_arg)
+	else:
+		return float(weight_arg)
+
 def main():
 
 	if (len(sys.argv) < 2):
@@ -63,14 +69,14 @@ def main():
 
 		VCF = str(sys.argv[2])
 		OUT = str(sys.argv[3])
-		weight = int(args.weight)
+		weight = convertWeight(args.weight)
 
 		CHROM = str(args.numchrom)
 
 		if args.top:
-			top_weight = int(args.top)
+			top_weight = convertWeight(args.top)
 		if args.bottom:
-			bottom_weight = int(args.bottom)
+			bottom_weight = convertWeight(args.bottom)
 
 		if (len(sys.argv) < 3):
 			sys.exit("Too few arguments specified", flush = True)
@@ -845,37 +851,37 @@ def main():
 					AA_scores = pd.DataFrame.from_dict(score_AA, orient = 'index', columns = ['AA'])
 					AA_scores = AA_scores.reset_index()
 					AA_scores = AA_scores.rename(columns = {AA_scores.columns[0]: 'Individual'})
-					print('AA_scores', flush = True)
-					print(AA_scores.head(), flush = True)
+					#print('AA_scores', flush = True)
+					#print(AA_scores.head(), flush = True)
 
 
 					BB_scores = pd.DataFrame.from_dict(score_BB, orient = 'index', columns = ['BB'])
 					BB_scores = BB_scores.reset_index()
 					BB_scores = BB_scores.rename(columns = {BB_scores.columns[0]: 'Individual'})
-					print('BB scores', flush = True)
-					print(BB_scores.head(), flush = True)
+					##print('BB scores', flush = True)
+					#print(BB_scores.head(), flush = True)
 
 					AB_scores = pd.DataFrame.from_dict(score_AB, orient = 'index', columns = ['AB'])
 					AB_scores = AB_scores.reset_index()
 					AB_scores = AB_scores.rename(columns = {AB_scores.columns[0]: 'Individual'})
-					print('AB_scores', flush = True)
-					print(AB_scores.head(), flush = True)
+					#print('AB_scores', flush = True)
+					#print(AB_scores.head(), flush = True)
 
 					map_SNPs = pd.DataFrame.from_dict(mapped_SNPs, orient = 'index', columns = ['SNPs'])
 					map_SNPs = map_SNPs.reset_index()
 					map_SNPs = map_SNPs.rename(columns = {map_SNPs.columns[0]: 'Individual'})
-					print('map_SNPs', flush = True)
-					print(map_SNPs.head(), flush = True)
+					#print('map_SNPs', flush = True)
+					#print(map_SNPs.head(), flush = True)
 
 					AA_BB = pd.merge(AA_scores, BB_scores, on = 'Individual')
 					AA_BB_AB = pd.merge(AA_BB, AB_scores, on = 'Individual')
 					inversion_scores = pd.merge(AA_BB_AB, map_SNPs, on = 'Individual')
-					print('AA_BB', flush = True)
-					print(AA_BB.head(), flush = True)
-					print('AA_BB_AB', flush = True)
-					print(AA_BB_AB.head(), flush = True)
-					print('inversion_scores', flush = True)
-					print(inversion_scores.head(), flush = True)
+					#print('AA_BB', flush = True)
+					#print(AA_BB.head(), flush = True)
+					#print('AA_BB_AB', flush = True)
+					#print(AA_BB_AB.head(), flush = True)
+					#print('inversion_scores', flush = True)
+					#print(inversion_scores.head(), flush = True)
 
 					#scale the probabilities to 1
 					no_match = inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0) & (inversion_scores['AB'] == 0)]
@@ -890,8 +896,8 @@ def main():
 					inversion_scores['scaled_prob_AB'] = inversion_scores['scaled_prob_AB'].astype(float)
 
 					inversion_scores = inversion_scores[['Individual', 'scaled_prob_AA', 'scaled_prob_BB', 'scaled_prob_AB', 'SNPs']].sort_values(by='Individual').round(decimals=3)
-					print('inversion_scores', flush = True)
-					print(inversion_scores.head(), flush = True)
+					#print('inversion_scores', flush = True)
+					#print(inversion_scores.head(), flush = True)
 
 					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB', 'scaled_prob_AB':'AB'})
 					all_scores = pd.concat([inversion_scores, no_match]).sort_values(by='Individual')
@@ -942,26 +948,26 @@ def main():
 
 					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB', 'scaled_prob_AB':'AB'})
 					unreadable_scores = pd.concat([unreadable, inversion_scores]).sort_values(by = 'Individual')
-					all_scores = pd.concat([unreadable_scores, inversion_scores]).sort_values(by = 'Individual')
+					all_scores = pd.concat([unreadable_scores, not_match]).sort_values(by = 'Individual')
 
-					print('AA_scores', flush = True)
-					print(AA_scores.head(), flush = True)
-					print('BB_scores', flush = True)
-					print(BB_scores.head(), flush = True)
-					print('AB_scores', flush = True)
-					print(AB_scores.head(), flush = True)
-					print('map_snps', flush = True)
-					print(map_SNPs.head(), flush = True)
-					print('AA_BB', flush = True)
-					print(AA_BB.head(), flush = True)
-					print('AA_BB_AB', flush = True)
-					print(AA_BB_AB.head(), flush = True)
-					print('inversion_scores', flush = True)
-					print(inversion_scores.head(), flush = True)
-					print('all_scores', flush = True)
-					print(all_scores.head(), flush = True)
-					print('unreadable', flush = True)
-					print(unreadable.head(), flush = True)
+					#print('AA_scores', flush = True)
+					#print(AA_scores.head(), flush = True)
+					#print('BB_scores', flush = True)
+					#print(BB_scores.head(), flush = True)
+					#print('AB_scores', flush = True)
+					#print(AB_scores.head(), flush = True)
+					#print('map_snps', flush = True)
+					#print(map_SNPs.head(), flush = True)
+					#print('AA_BB', flush = True)
+					#print(AA_BB.head(), flush = True)
+					#print('AA_BB_AB', flush = True)
+					#print(AA_BB_AB.head(), flush = True)
+					#print('inversion_scores', flush = True)
+					#print(inversion_scores.head(), flush = True)
+					#print('all_scores', flush = True)
+					#print(all_scores.head(), flush = True)
+					#print('unreadable', flush = True)
+					#print(unreadable.head(), flush = True)
 
 
 					all_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
