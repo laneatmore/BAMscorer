@@ -27,7 +27,6 @@ README \
 Utility scripts for visualization/data prep
 
 **please note: BAMscorer requires glibc_2.17 or above \
-**BAMscorer_v1_linux allows individuals with no matching alleles to the reference database to be output as "no match". The Mac binary currently does not allow this and will throw an error if there is an individual in the scoring database that does not match either of the reference databases at any of the loci under consideration. If you experience this error, please remove that individual and re-run BAMscorer. We will provide an update to the Mac binary soon.
 
 ## Running BAMscorer
 
@@ -75,9 +74,9 @@ OPTIONAL ARGUMENTS: \
 
 **--maf** specify a MAF filtering step for your data. Default is no MAF filtering.
 
-**--weight** specify SNP loading weight cut-off for database creation. Default is top and bottom 5% of SNP loading loci. Argument should be an integer.
+**--weight** specify SNP loading weight cut-off for database creation. Default is top and bottom 5% of SNP loading loci. Argument can be an integer or a float (decimal)
 
-**--top/--bottom** specify pulling SNPs from the top or bottom tail of the SNP loading distribution. These arguments must be used together to specify the amount of distribution taken from each tail (0 is an accepted input value). These arguments should not be used with --weight, which pulls equally from both tails of the distribution.
+**--top/--bottom** specify pulling SNPs from the top or bottom tail of the SNP loading distribution. These arguments must be used together to specify the amount of distribution taken from each tail (0 is an accepted input value). These arguments should not be used with --weight, which pulls equally from both tails of the distribution. Argument can be an integer or a float (decimal)
 
 **--numchrom** specify the number of chromosomes if greater than 22
 
@@ -144,8 +143,6 @@ An example file LG01_scores.txt is included in the test_data directory.
 score_bams first pipes through VCFtools to calculate allele frequencies for the sites that are most divergent in the type AA and type BB haplotypes using {OUT}.divergent_snps.txt. It then creates a database of the dominant and minor alleles (both ref and alt) for both haplotypes. Using these databases it iterates through the bam files in the BAM folder and creates individual databases of the alleles present at the segregating positions for both AA and BB haplotypes. It then compares the alleles present at these positions in each individual to the dominant alleles in the haplotype databases. 
 
 Allelic state at each position is determined by the majority allele throughout all reads at the position in question. For alleles presented in equal numbers of reads, one allele is chosen at random. Each position is then scored against the divergent SNPs databases. The probability that the observed allele belongs to type AA, BB, or AB is determined by the allele frequencies of the alleles at that position in the divergent SNPs database. AB allele frequencies are calculated as the average frequencies between AA and BB at each position. Joint probabilities are then calculated for each position and the output denotes the probabilities that each individual belongs to haploytpes AA, BB, or AB.
-
-It is sometimes the case that a BAM file will contain none of the positions desired for analysis. In this instance BAMscorer will output "Too few reads" and move on to the next file in the directory.
 
 ### If you want to use score_bams for whole-genome analysis...
 If you've created your whole-genome SNP database using select_snps and proceeded to score_bams you can run the program as above and simply specify the --wg flag for score_bams. The OUT argument acts as the name for the output file and should match the prefix prefix as added to the {OUT}_AA_individuals.txt and {OUT}_BB_individuals.txt files. In the case of whole-genome analysis these may refer to different geographic locations or known phenotypes rather than "AA" or "BB" homozygote haplotypes. However, renaming these files will cause BAMscorer to fail, so please don't change the file names. 
