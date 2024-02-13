@@ -412,7 +412,7 @@ def main():
 		update_evec(OUT)
 		if args.top and args.bottom:
 			divergent_snps_custom(OUT, top_weight, bottom_weight)
-		else:
+		elif not args.top and args.bottom:
 			divergent_snps_symm(OUT, weight)
 		het_calc(VCF, OUT)
 		pca_het(OUT)
