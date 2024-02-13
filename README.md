@@ -26,7 +26,7 @@ Test dataset \
 README \
 Utility scripts for visualization/data prep
 
-**please note: BAMscorer requires glibc_2.17 or above \
+**please note: BAMscorer requires glibc_2.17 or above 
 
 ## Running BAMscorer
 
@@ -46,6 +46,8 @@ Please make sure you have all the following requirements in your python environm
 pysam \
 pandas \
 numpy*
+
+Note: issues have been reported with pandas 1.4 and above. Please make sure to use pandas 1.3.5 with BAMscorer for the time being \
 
 Specific arguments are described below. Running BAMscorer select_snps -h or BAMscorer score_bams -h can also provide more information.
 
