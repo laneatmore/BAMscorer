@@ -711,7 +711,6 @@ def main():
 						divergent_DA = divergent_snps
 						divergent_MA = divergent_snps_maf
 
-
 						divergent_DA['CHROM'] = divergent_DA['CHROM'].astype(str)
 						divergent_DA['POS'] = divergent_DA['POS'].astype(str)
 						divergent_MA['CHROM'] = divergent_MA['CHROM'].astype(str)
@@ -748,17 +747,17 @@ def main():
 						matched_idx_DA_BB = matching[matching['bam_position'].isin(matched_BB)].index
 
 						if not matched_idx_DA_AA.empty:
-							matching.at[np.array(matched_idx_DA_AA),'NEW_AF_AA'] = matching['AF_AA']
+							matching.loc[np.array(matched_idx_DA_AA),'NEW_AF_AA'] = matching['AF_AA']
 						if not matched_idx_DA_BB.empty:
-							matching.at[np.array(matched_idx_DA_BB),'NEW_AF_BB'] = matching['AF_BB']
+							matching.loc[np.array(matched_idx_DA_BB),'NEW_AF_BB'] = matching['AF_BB']
 
 						matched_idx_MA_AA = matching[matching['bam_position'].isin(matched_maf_AA)].index
 						matched_idx_MA_BB = matching[matching['bam_position'].isin(matched_maf_BB)].index
 
 						if not matched_idx_MA_AA.empty:
-							matching.at[np.array(matched_idx_MA_AA),'NEW_AF_AA'] = matching_maf['AF_AA']
+							matching.loc[np.array(matched_idx_MA_AA),'NEW_AF_AA'] = matching_maf['AF_AA']
 						if not matched_idx_MA_BB.empty:
-							matching.at[np.array(matched_idx_MA_BB),'NEW_AF_BB'] = matching_maf['AF_BB']
+							matching.loc[np.array(matched_idx_MA_BB),'NEW_AF_BB'] = matching_maf['AF_BB']
 
 						#if the MAF is 0, recode those positions again as (1/2N + 1)
 						divergent_DA = divergent_DA.mask(divergent_DA == '0').fillna(expected_freq)
@@ -794,9 +793,9 @@ def main():
 						matching['AF_AB'] = expected_freq
 
 						if not matched_idx_AB_AA.empty:
-							matching.at[np.array(matched_idx_AB_AA),'AF_AB'] = AB_match['AF_AB_AA']
+							matching.loc[np.array(matched_idx_AB_AA),'AF_AB'] = AB_match['AF_AB_AA']
 						if not matched_idx_AB_BB.empty:
-							matching.at[np.array(matched_idx_AB_BB),'AF_AB'] = AB_match['AF_AB_BB']
+							matching.loc[np.array(matched_idx_AB_BB),'AF_AB'] = AB_match['AF_AB_BB']
 
 						matching_2 = matching
 
@@ -900,7 +899,7 @@ def main():
 					#print(inversion_scores.head(), flush = True)
 
 					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB', 'scaled_prob_AB':'AB'})
-					all_scores = pd.concat([inversion_scores, no_match]).sort_values(by='Individual')
+					all_scores = (inversion_scores.copy() if no_match.empty else pd.concat([inversion_scores, no_match])).sort_values(by='Individual')
 					all_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
 
 
@@ -948,7 +947,7 @@ def main():
 
 					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB', 'scaled_prob_AB':'AB'})
 					unreadable_scores = pd.concat([unreadable, inversion_scores]).sort_values(by = 'Individual')
-					all_scores = pd.concat([unreadable_scores, not_match]).sort_values(by = 'Individual')
+					all_scores = (unreadable_scores.copy() if no_match.empty else pd.concat([unreadable_scores, no_match])).sort_values(by = 'Individual')
 
 					#print('AA_scores', flush = True)
 					#print(AA_scores.head(), flush = True)
@@ -1302,17 +1301,17 @@ def main():
 						matched_idx_DA_BB = matching[matching['bam_position'].isin(matched_BB)].index
 
 						if not matched_idx_DA_AA.empty:
-							matching.at[np.array(matched_idx_DA_AA),'NEW_AF_AA'] = matching['AF_AA']
+							matching.loc[np.array(matched_idx_DA_AA),'NEW_AF_AA'] = matching['AF_AA']
 						if not matched_idx_DA_BB.empty:
-							matching.at[np.array(matched_idx_DA_BB),'NEW_AF_BB'] = matching['AF_BB']
+							matching.loc[np.array(matched_idx_DA_BB),'NEW_AF_BB'] = matching['AF_BB']
 
 						matched_idx_MA_AA = matching[matching['bam_position'].isin(matched_maf_AA)].index
 						matched_idx_MA_BB = matching[matching['bam_position'].isin(matched_maf_BB)].index
 
 						if not matched_idx_MA_AA.empty:
-							matching.at[np.array(matched_idx_MA_AA),'NEW_AF_AA'] = matching_maf['AF_AA']
+							matching.loc[np.array(matched_idx_MA_AA),'NEW_AF_AA'] = matching_maf['AF_AA']
 						if not matched_idx_MA_BB.empty:
-							matching.at[np.array(matched_idx_MA_BB),'NEW_AF_BB'] = matching_maf['AF_BB']
+							matching.loc[np.array(matched_idx_MA_BB),'NEW_AF_BB'] = matching_maf['AF_BB']
 
 						#if the MAF is 0, recode those positions again as (1/2N + 1)
 						matching = matching.mask(matching == 0.0).fillna(expected_freq)
@@ -1392,7 +1391,7 @@ def main():
 
 					inversion_scores = inversion_scores[['Individual', 'scaled_prob_AA', 'scaled_prob_BB', 'SNPs']].sort_values(by='Individual').round(decimals=3)
 					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB'})
-					all_scores = pd.concat([inversion_scores, no_match]).sort_values(by='Individual')
+					all_scores = (inversion_scores.copy() if no_match.empty else pd.concat([inversion_scores, no_match])).sort_values(by='Individual')
 					all_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
 
 					print('AA_scores', flush = True)
@@ -1434,7 +1433,6 @@ def main():
 					#print('inversion scores unreadable', flush=True)
 					#print(inversion_scores, flush=True)
 
-
 					#no_match = []
 					no_match = inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0)]
 					#no_match = no_match.rename(columns = {'AA': 'Prob AA', 'BB':'Prob BB'})
@@ -1443,7 +1441,6 @@ def main():
 					#no_match['BB'] = 'no match'
 
 					inversion_scores.drop((inversion_scores.loc[(inversion_scores['AA'] == 0) & (inversion_scores['BB'] == 0)]).index, inplace = True)
-
 
 					inversion_scores['scaled_prob_AA'] = inversion_scores['AA']/(inversion_scores['AA'] + inversion_scores['BB'])
 					inversion_scores['scaled_prob_BB'] = inversion_scores['BB']/(inversion_scores['AA'] + inversion_scores['BB'])
@@ -1455,7 +1452,7 @@ def main():
 					inversion_scores = inversion_scores.rename(columns = {'scaled_prob_AA':'AA', 'scaled_prob_BB':'BB'})
 
 					unreadable_scores = pd.concat([unreadable, inversion_scores]).sort_values(by = 'Individual')
-					all_scores = pd.concat([unreadable_scores,no_match]).sort_values(by='Individual')
+					all_scores = (unreadable_scores.copy() if no_match.empty else pd.concat([unreadable_scores,no_match])).sort_values(by='Individual')
 					all_scores.to_csv(OUT + '_scores.txt', sep = '\t', index = False)
 
 				print("Outputting BAM scores to " + OUT + '_scores.txt')
