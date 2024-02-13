@@ -406,7 +406,7 @@ def main():
 		if args.numchrom:
 			convertf_run_numchrom(OUT, CHROM)
 			smartpca_run_numchrom(OUT, CHROM)
-		else:
+		elif not args.numchrom:
 			convertf_run(OUT)
 			smartpca_run(OUT)
 		update_evec(OUT)
