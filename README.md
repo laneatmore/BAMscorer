@@ -47,7 +47,7 @@ pysam \
 pandas \
 numpy*
 
-Note: previous BAMscorer releases were compatible with pandas 1.3.5 but not pandas >1.4. BAMscorer v1.6 is compatible with both \
+Note: please ensure you are using the correct versions of dependencies. BAMscorerv1.6+ is compatible with pandas 1.4+ All previous BAMscorer releases (avilable on the releases page) are compatible with pandas 1.3.5
 
 Specific arguments are described below. Running BAMscorer select_snps -h or BAMscorer score_bams -h can also provide more information.
 
