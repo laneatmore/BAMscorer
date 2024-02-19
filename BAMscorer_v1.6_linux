@@ -406,13 +406,13 @@ def main():
 		if args.numchrom:
 			convertf_run_numchrom(OUT, CHROM)
 			smartpca_run_numchrom(OUT, CHROM)
-		elif not args.numchrom:
+		else:
 			convertf_run(OUT)
 			smartpca_run(OUT)
 		update_evec(OUT)
 		if args.top and args.bottom:
 			divergent_snps_custom(OUT, top_weight, bottom_weight)
-		elif not args.top and args.bottom:
+		else:
 			divergent_snps_symm(OUT, weight)
 		het_calc(VCF, OUT)
 		pca_het(OUT)
