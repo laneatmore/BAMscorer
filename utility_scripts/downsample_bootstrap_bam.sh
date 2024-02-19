@@ -21,7 +21,7 @@
 ##USAGE: sbatch <scriptname> <bamfilename> 
 
 module purge
-module load SAMtools/1.9-foss-2018b
+module load SAMtools/1.17-GCC-12.2.0
 
 
 #Create temp directory for read selection
