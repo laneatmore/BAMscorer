@@ -337,7 +337,7 @@ def main():
 		#We will only take those loci that are in the top/bottom 5% of SNP loadings
 		def divergent_snps_symm(OUT, weight):
 			snp_loadings = pd.read_csv(OUT + '.SNP.loadings',
-				delim_whitespace = True,
+				sep='\s+',
 				names = ['position', 'chr', 'pos', 'pc1', 'pc2'])
 
 			top = snp_loadings[snp_loadings.pc1 > np.percentile(snp_loadings.pc1,(100-weight))]
@@ -350,7 +350,7 @@ def main():
 
 		def divergent_snps_custom(OUT, top_weight, bottom_weight):
 			snp_loadings = pd.read_csv(OUT + '.SNP.loadings',
-				delim_whitespace = True,
+				sep='\s+',
 				names = ['position', 'chr', 'pos', 'pc1', 'pc2'])
 
 			top = snp_loadings[snp_loadings.pc1 > np.percentile(snp_loadings.pc1,(100-top_weight))]
