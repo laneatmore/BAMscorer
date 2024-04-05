@@ -49,6 +49,8 @@ numpy*
 
 Note: please ensure you are using the correct versions of dependencies. BAMscorerv1.6+ is compatible with pandas 1.4+ All previous BAMscorer releases (available on the releases page) are compatible with pandas 1.3.5
 
+Please also ensure that you do not have "." included in your chromosome names. While BAMscorer is flexible with chromosome name formats, the inclusion of a period will mess up the scoring calculation. 
+
 Specific arguments are described below. Running BAMscorer select_snps -h or BAMscorer score_bams -h can also provide more information.
 
 
