@@ -47,10 +47,6 @@ pysam \
 pandas \
 numpy*
 
-Note: please ensure you are using the correct versions of dependencies. BAMscorerv1.6+ is compatible with pandas 1.4+ All previous BAMscorer releases (available on the releases page) are compatible with pandas 1.3.5
-
-Please also ensure that you do not have "." included in your chromosome names. While BAMscorer is flexible with chromosome name formats, the inclusion of a period will mess up the scoring calculation. 
-
 Specific arguments are described below. Running BAMscorer select_snps -h or BAMscorer score_bams -h can also provide more information.
 
 
@@ -68,8 +64,6 @@ To run select_snps on the test data use this command from the BAMscorer director
 BAMscorer select_snps test_data/LG01_testdata.vcf.gz test_data/LG01 --map test_data/chrom_map
 
 Arguments 1 and 2 are required to run the program and merely point to the input VCF file and the output prefix. The VCF file should be bgzipped.
-
-**There is currently an issue with converting from VCF using the --include and --map arguments with species that have >26 chromosomes.  Currently, conversion to PLINK using VCFtools (around which BAMscorer is wrapped) does not allow specifying >26 chromosomes. If you have a genome with a large number of scaffolds, we recommend renaming these scaffolds as integers within the VCF file prior to inputting into BAMscorer. When inputting into BAMscorer you will then not require the arg --map. If you would like a specific region of this VCF, please pre-select it prior to running BAMscorer to avoid the --include argument. Remember to use the arg --num-chrom to set the number of chromosomes so PLINK does not cut off chromosomes >22. Note that --num-chrom is capped at 95, since PLINK only allows up to 95 chromosomes. We recommend scaffold binning if you have >95 contigs.**
 
 OPTIONAL ARGUMENTS: \
 **--include** points to a BED file with specified regions to pass to VCFtools. Using --include means the script will only process sites within these regions. The BED should be tab-delimited and with headers(CHR\t START\t END). If the VCF file has not already been sliced to include only the inversion, this will allow the user to select just the inversion site for analysis. If your VCF has already been cut to the inversion site this argument can be ignored. Note: If the prefix of the .bed file is the same as the OUT prefix this file will be rewritten when the VCF is converted to PLINK format. It is also much faster to run the program on a VCF file that has already been split to just the inversion site, particularly if the genome in question is large.
@@ -153,6 +147,15 @@ If you've created your whole-genome SNP database using select_snps and proceeded
 
 score_bams can also be used as a stand-alone module if the user has a pre-existing panel of phenotypes and diagnostic SNPs. Simply create lists of individuals sorted by phenotype and use the diagnostic SNP list as the {OUT}.divergent_SNPs.txt file. Again, individuals lists for each phenotype must be coded as {OUT}_AA_individuals.txt or {OUT}_BB_individuals.txt and a full individual list will need to be saved as {OUT}_db_individuals.txt
 
+## Common issues:
+
+Make sure "." is not included in the chromosome name. BAMscorer is relatively flexible with chromosomal notation, but the inclusion of "." will mess up the scoring system. 
+
+BAMscorer uses VCFtools to convert to PLINK format when using select_snps. VCFtools does not allow >26 chromosomes. To get around this, please either bin the scaffolds and rename them as integers between 1 and 26 (you will then not need to include the --map argument). If you would like a specific region of this VCF, please pre-select it prior to running BAMscorer to avoid the --include argument. This will allow you to bypass VCFtools. Remember to use the arg --num-chrom to set the number of chromosomes so PLINK does not cut off chromosomes >22. Note that --num-chrom is capped at 95, since PLINK only allows up to 95 chromosomes. We recommend scaffold binning if you have >95 contigs.
+
+Please ensure you are using the correct versions of dependencies. BAMscorerv1.6+ is compatible with pandas 1.4+ All previous BAMscorer releases (available on the releases page) are compatible with pandas 1.3.5
+
+Make sure all required files are in the working directory and contain the same prefix.
 
 ## Also included in this repository: 
 Utility_scripts: \
