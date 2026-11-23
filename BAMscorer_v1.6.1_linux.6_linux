@@ -644,7 +644,7 @@ def main():
 							pos_alleles = list(zip(chrom, pos_bam, alleles))
 							pos_alleles = pd.DataFrame(pos_alleles, columns = ['CHROM','POS_minus1', 'ALLELES'])
 							pos_alleles['POS_minus1'] = pos_alleles['POS_minus1'].astype(str)
-							pos_alleles['position'] = pos_alleles[['CHROM', 'POS_minus1']].agg('.'.join, axis=1)
+							pos_alleles['position'] = pos_alleles[['CHROM', 'POS_minus1']].agg('-'.join, axis=1)
 
 							#get consensus reads for each position...
 							pos_alleles = pos_alleles[['position', 'ALLELES']]
@@ -665,8 +665,8 @@ def main():
 							pos_alleles_back.clear()
 							pos_alleles.columns = ['ALLELES']
 							pos_alleles = pos_alleles.reset_index()
-							pos_alleles['CHROM'] = pos_alleles['index'].str.split('.').map(lambda x: x[0])
-							pos_alleles['POS_minus1'] = pos_alleles['index'].str.split('.').map(lambda x: x[1])
+							pos_alleles['CHROM'] = pos_alleles['index'].str.split('-').map(lambda x: x[0])
+							pos_alleles['POS_minus1'] = pos_alleles['index'].str.split('-').map(lambda x: x[1])
 							pos_alleles['POS'] = pd.to_numeric(pos_alleles['POS_minus1']).apply(lambda x: x +1)
 							pos_alleles = pos_alleles[['CHROM', 'POS', 'ALLELES']].drop_duplicates()
 							print('Finished reading bam for: ' + ind, flush = True)
@@ -705,7 +705,7 @@ def main():
 						#in the divergent SNPs database
 						pileup_out['POS'] = pileup_out['POS'].astype(str)
 						pileup_out['CHROM'] = pileup_out['CHROM'].astype(str)
-						pileup_out['bam_position'] = pileup_out[['CHROM', 'POS', 'ALLELES']].agg('.'.join, axis=1)
+						pileup_out['bam_position'] = pileup_out[['CHROM', 'POS', 'ALLELES']].agg('-'.join, axis=1)
 						divergent_DA = pd.DataFrame()
 						divergent_MA = pd.DataFrame()
 						divergent_DA = divergent_snps
@@ -716,10 +716,10 @@ def main():
 						divergent_MA['CHROM'] = divergent_MA['CHROM'].astype(str)
 						divergent_MA['POS'] = divergent_MA['POS'].astype(str)
 
-						divergent_DA['position_AA'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_AA']].agg('.'.join, axis = 1)
-						divergent_DA['position_BB'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_BB']].agg('.'.join, axis = 1)
-						divergent_MA['position_AA'] = divergent_MA[['CHROM', 'POS', 'min_Allele_AA']].agg('.'.join, axis = 1)
-						divergent_MA['position_BB'] = divergent_MA[['CHROM', 'POS', 'min_Allele_BB']].agg('.'.join, axis = 1)
+						divergent_DA['position_AA'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_AA']].agg('-'.join, axis = 1)
+						divergent_DA['position_BB'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_BB']].agg('-'.join, axis = 1)
+						divergent_MA['position_AA'] = divergent_MA[['CHROM', 'POS', 'min_Allele_AA']].agg('-'.join, axis = 1)
+						divergent_MA['position_BB'] = divergent_MA[['CHROM', 'POS', 'min_Allele_BB']].agg('-'.join, axis = 1)
 
 						#combine reads with the dominant and minor databases
 						matching = pd.merge(pileup_out, divergent_DA, on = 'POS')
@@ -1197,7 +1197,7 @@ def main():
 							pos_alleles = list(zip(chrom, pos_bam, alleles))
 							pos_alleles = pd.DataFrame(pos_alleles, columns = ['CHROM','POS_minus1', 'ALLELES'])
 							pos_alleles['POS_minus1'] = pos_alleles['POS_minus1'].astype(str)
-							pos_alleles['position'] = pos_alleles[['CHROM', 'POS_minus1']].agg('.'.join, axis=1)
+							pos_alleles['position'] = pos_alleles[['CHROM', 'POS_minus1']].agg('-'.join, axis=1)
 
 							#get consensus reads for each position...
 							pos_alleles = pos_alleles[['position', 'ALLELES']]
@@ -1218,8 +1218,8 @@ def main():
 							pos_alleles_back.clear()
 							pos_alleles.columns = ['ALLELES']
 							pos_alleles = pos_alleles.reset_index()
-							pos_alleles['CHROM'] = pos_alleles['index'].str.split('.').map(lambda x: x[0])
-							pos_alleles['POS_minus1'] = pos_alleles['index'].str.split('.').map(lambda x: x[1])
+							pos_alleles['CHROM'] = pos_alleles['index'].str.split('-').map(lambda x: x[0])
+							pos_alleles['POS_minus1'] = pos_alleles['index'].str.split('-').map(lambda x: x[1])
 							pos_alleles['POS'] = pd.to_numeric(pos_alleles['POS_minus1']).apply(lambda x: x +1)
 							pos_alleles = pos_alleles[['CHROM', 'POS', 'ALLELES']].drop_duplicates()
 							print('Finished reading bam for: ' + ind, flush = True)
@@ -1259,7 +1259,7 @@ def main():
 
 						#compare the observed allele at each position with the dominant or minor allele
 						#in the divergent SNPs database
-						pileup_out['bam_position'] = pileup_out[['CHROM', 'POS', 'ALLELES']].agg('.'.join, axis=1)
+						pileup_out['bam_position'] = pileup_out[['CHROM', 'POS', 'ALLELES']].agg('-'.join, axis=1)
 
 						divergent_DA = pd.DataFrame()
 						divergent_MA = pd.DataFrame()
@@ -1271,10 +1271,10 @@ def main():
 						divergent_MA['CHROM'] = divergent_MA['CHROM'].astype(str)
 						divergent_MA['POS'] = divergent_MA['POS'].astype(str)
 
-						divergent_DA['position_AA'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_AA']].agg('.'.join, axis = 1)
-						divergent_DA['position_BB'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_BB']].agg('.'.join, axis = 1)
-						divergent_MA['position_AA'] = divergent_MA[['CHROM', 'POS', 'min_Allele_AA']].agg('.'.join, axis = 1)
-						divergent_MA['position_BB'] = divergent_MA[['CHROM', 'POS', 'min_Allele_BB']].agg('.'.join, axis = 1)
+						divergent_DA['position_AA'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_AA']].agg('-'.join, axis = 1)
+						divergent_DA['position_BB'] = divergent_DA[['CHROM', 'POS', 'dom_Allele_BB']].agg('-'.join, axis = 1)
+						divergent_MA['position_AA'] = divergent_MA[['CHROM', 'POS', 'min_Allele_AA']].agg('-'.join, axis = 1)
+						divergent_MA['position_BB'] = divergent_MA[['CHROM', 'POS', 'min_Allele_BB']].agg('-'.join, axis = 1)
 
 						#combine reads with the dominant and minor databases
 						matching = pd.merge(pileup_out, divergent_DA, on = 'POS')
